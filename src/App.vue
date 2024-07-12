@@ -2,18 +2,20 @@
 
   <constructorHead />
   <div className="ask-qustion container"><a href="#">Часто задаваемы вопросы</a></div>
-  <ConstructorListContent />
-
+  <!-- <ConstructorListContent /> -->
+  <Step1 />
 
 </template>
 <script>
 import { defineComponent } from 'vue'
 import ConstructorHead from './components/constructorHead.vue'
 import ConstructorListContent from './components/constructorListContent.vue'
+import Step1 from './components/step1.vue';
 export default defineComponent({
   components: {
     ConstructorHead,
-    ConstructorListContent
+    ConstructorListContent,
+    Step1,
   }
 })
 </script>
