@@ -14,7 +14,8 @@
                                 stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
                     </div>
-                    <a href="#">Смотреть видео иснструкцию</a>
+                    <a href="#" @click.prevent="openVideoInstructions">Смотреть видео иснструкцию</a>
+                    <VideoInstructions ref="videoInstructionsRef"></VideoInstructions>
                 </div>
             </div>
             <div class="white-bg-text">
@@ -51,10 +52,26 @@
     </div>
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, ref } from 'vue'
+import VideoInstructions from './VideoInstructions.vue'
+
 export default defineComponent({
     name: 'ConstructorHead',
+    components: {
+        VideoInstructions,
+    },
+    setup() {
+        const videoInstructionsRef = ref<InstanceType<typeof VideoInstructions> | null>(null);
 
+        const openVideoInstructions = () => {
+            videoInstructionsRef.value?.show();
+        };
+
+        return {
+            videoInstructionsRef,
+            openVideoInstructions,
+        };
+    }
 })
 </script>
 <style>

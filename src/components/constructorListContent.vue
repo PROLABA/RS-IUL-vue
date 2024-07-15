@@ -9,7 +9,21 @@
                 <div class="conten-body">
                     <div class="content-item">
                         <div class="outline">
-                            <div class="grey-bg"></div>
+
+                            <Image preview alt="iul">
+                                <template #previewicon>
+                                    <img src=/src/assets/img/magnifier.png>
+                                </template>
+                                <template #image>
+                                    <img className="iul-imges"
+                                        src="https://primefaces.org/cdn/primevue/images/galleria/galleria11.jpg"
+                                        alt="image" />
+                                </template>
+                                <template #preview="slotProps">
+                                    <img src="https://primefaces.org/cdn/primevue/images/galleria/galleria11.jpg"
+                                        alt="preview" :style="slotProps.style" @click="slotProps.onClick" />
+                                </template>
+                            </Image>
                         </div>
 
                     </div>
@@ -20,7 +34,20 @@
                 <div class="conten-body">
                     <div class="content-item">
                         <div class="outline">
-                            <div class="grey-bg"></div>
+                            <Image preview alt="iul">
+                                <template #previewicon>
+                                    <img src=/src/assets/img/magnifier.png>
+                                </template>
+                                <template #image>
+                                    <img className="iul-imges"
+                                        src="https://primefaces.org/cdn/primevue/images/galleria/galleria11.jpg"
+                                        alt="image" />
+                                </template>
+                                <template #preview="slotProps">
+                                    <img src="https://primefaces.org/cdn/primevue/images/galleria/galleria11.jpg"
+                                        alt="preview" :style="slotProps.style" @click="slotProps.onClick" />
+                                </template>
+                            </Image>
                         </div>
 
                     </div>
@@ -34,12 +61,21 @@
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
+import Image from 'primevue/image';
 export default defineComponent({
     name: 'constructorListContent',
-
+    components: {
+        Image,
+    }
 })
 </script>
 <style>
+.iul-imges {
+    object-fit: cover;
+    width: 210px !important;
+    height: 260px !important;
+}
+
 .white-bg {
     background: #FFFFFF;
     border-radius: 4px;
@@ -53,7 +89,6 @@ export default defineComponent({
 }
 
 .content-title p {
-    font-family: Roboto;
     font-size: 18px;
     font-weight: 700;
     line-height: 21.09px;
@@ -69,40 +104,10 @@ export default defineComponent({
 .content-item {
     border: 1px solid #E9E9E9;
     padding: 20px;
+    border-radius:4px ;
 
 }
 
-.grey-bg {
-    background: #E9E9E9;
-    width: 210px;
-    height: 260px;
-    border-radius: 4px;
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-}
-
-.grey-bg::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    cursor: pointer;
-
-    background: url(../assets/img/magnifier.png) no-repeat center center;
-    background-size: contain;
-    width: 32px;
-    height: 32px;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.grey-bg:hover::before {
-    opacity: 1;
-}
 
 .outline-button {
     margin-top: 20px;
