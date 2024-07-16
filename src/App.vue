@@ -2,8 +2,8 @@
 
   <constructorHead />
   <div className="ask-qustion container"><a href="#">Часто задаваемы вопросы</a></div>
-  <!-- <ConstructorListContent />
-  <Step1 /> -->
+  <ConstructorListContent />
+  <Step1 />
   <Step2 />
 </template>
 <script>

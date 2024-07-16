@@ -21,6 +21,10 @@
                 </p>
                 <img src="/src/assets/img/result2.png" alt="" srcset="">
             </div>
+            <div class="doted-content-file-input">
+               <input type="file">
+
+            </div>
         </div>
     </div>
 </template>
@@ -42,8 +46,6 @@
     max-width: 300px !important;
 
     border-radius: 4px;
-    padding: 15px !important;
-    left: 260px !important;
 
 }
 
@@ -61,22 +63,55 @@
     width: 100% !important;
 
 }
-.p-tooltip-text p { 
-    padding-bottom: 5px !important;
-}
+
 
 .p-tooltip .p-tooltip-arrow {
-    left: 15px !important;
     border-top-color: white !important;
+}
+
+.doted-content-file-input {
+    padding: 20px;
+    border-radius: 4px;
+    border: 1px dotted #E9E9E9;
+    max-width: 490px;
+    width: 100%;
+}
+
+.no-icon .p-button-icon {
+    display: none;
+}
+
+.doted-content-file-input .p-button {
+    padding: 13px 45px !important;
+    background: transparent !important;
+    border: 1px solid #99CCFF !important;
+    color: #99CCFF !important;
+    border-radius: 4px !important;
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    line-height: 18.75px !important;
+
+
+}
+
+.doted-content-file-input .p-fileupload-basic {
+    flex-direction: column-reverse;
+    align-items: flex-start;
+
 }
 </style>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
 import Tooltip from 'primevue/tooltip';
+import FileUpload from 'primevue/fileupload';
+
+// document.getElementByClassName("myspan").textContent = "newtext";
+
 
 export default defineComponent({
     name: 'Step2',
+    components: { FileUpload, },
     directives: {
         'tooltip': Tooltip
     },
@@ -86,8 +121,7 @@ export default defineComponent({
       <p>2. Расширение docx, doc, xlsx, xls, pdf</p>
       <p>3. Можно загрузить несколько файлов для смет (не более 10 файлов)</p>
     `;
-
-
+    
         return { tooltipContent };
     }
 })

@@ -21,11 +21,7 @@
                     <Dropdown v-model="selectedCustom" :options="customOptions" optionLabel="name"
                         placeholder="Ваш вариант" class="type-document" />
                 </div>
-                <div v-if="showAdditionalDropdowns" className="flex-just-spcbtw">
-                    <Button label="Назад" className="prev" icon="pi pi-arrow-left" text />
-                    <Button className="next" label="Следующий шаг" />
-
-                </div>
+                <ButtonsFooter v-if="showAdditionalDropdowns" />
             </div>
         </div>
     </div>
@@ -44,10 +40,12 @@
 .p-select {
     border: 1.5px solid #E9E9E9 !important;
 }
+
 .p-select-option.p-select-option-selected.p-focus {
     background-color: transparent !important;
     color: none;
 }
+
 .selects-content {
     max-width: 490px;
 }
@@ -65,10 +63,12 @@
     color: #333333 !important;
     padding: 19px !important;
 }
-.p-select-label.p-placeholder { 
+
+.p-select-label.p-placeholder {
     color: #B3B3B3 !important;
 
 }
+
 .p-select-option-label {
     font-size: 14px;
     font-weight: 400;
@@ -122,13 +122,13 @@
 import { defineComponent, ref } from 'vue'
 import Dropdown from 'primevue/dropdown'
 import Button from 'primevue/button';
-
+import ButtonsFooter from "./buttonsFooter.vue";
 
 export default defineComponent({
     name: 'Step1',
     components: {
         Dropdown,
-        Button
+        Button, ButtonsFooter
     },
     setup() {
         const selectedType = ref(null)
@@ -139,19 +139,16 @@ export default defineComponent({
         const types = ref([
             { name: 'Результаты инженерных изысканий', code: 'RII' },
             { name: 'Проектная документация', code: 'PD' },
-            // Add more options as needed
         ])
 
         const sections = ref([
             { name: 'Раздел 1', code: 'S1' },
             { name: 'Раздел 2', code: 'S2' },
-            // Add more sections as needed
         ])
 
         const customOptions = ref([
             { name: 'Опция 1', code: 'O1' },
             { name: 'Опция 2', code: 'O2' },
-            // Add more custom options as needed
         ])
 
         const onFirstDropdownChange = () => {
