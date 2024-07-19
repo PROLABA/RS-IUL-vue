@@ -149,7 +149,7 @@ ul {
 
 }
 
-ul li:before {
+.form-iula ul li:before {
     content: "—";
     position: relative;
     left: 2px;
