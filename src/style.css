@@ -98,3 +98,8 @@ video {
   vertical-align: baseline;
   font-family: "Roboto", sans-serif;
 }
+
+body {
+  overflow-x: hidden;
+  box-sizing: border-box;
+}

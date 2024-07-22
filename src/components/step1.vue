@@ -39,6 +39,7 @@
 
 .p-select {
     border: 1.5px solid #E9E9E9 !important;
+
 }
 
 .p-select-option.p-select-option-selected.p-focus {
@@ -87,44 +88,16 @@
     justify-content: space-between;
     align-items: center;
 }
-
-.next {
-    background-color: #0578D6;
-    padding: 18px 37.5px;
-    border-radius: 4px;
-    border: none;
-    font-family: Roboto;
-    font-size: 16px;
-    font-weight: 700;
-    line-height: 18.75px;
-    text-align: left;
-    color: white;
-    cursor: pointer;
-}
-
-.prev {
-    display: flex;
-    border-radius: 4px;
-    border: none;
-    background-color: transparent !important;
-    cursor: pointer;
-    gap: 10px;
-    font-family: Roboto;
-    font-size: 16px;
-    font-weight: 400;
-    line-height: 18.75px;
-    text-align: left;
-    color: #0578D6;
-
-}
 </style>
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
 import Dropdown from 'primevue/dropdown'
 import Button from 'primevue/button';
 import ButtonsFooter from "./buttonsFooter.vue";
+import 'primeicons/primeicons.css';
 
 export default defineComponent({
+
     name: 'Step1',
     components: {
         Dropdown,

@@ -1,5 +1,5 @@
 <template>
-   
+
     <div className="flex-just-spcbtw">
         <Button label="Назад" className="prev" icon="pi pi-arrow-left" text />
         <Button className="next" label="Следующий шаг" />
@@ -42,10 +42,14 @@
     color: #0578D6;
 
 }
+
+button:disabled {
+    background: #E9E9E9 !important;
+
+}
 </style>
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
-import Dropdown from 'primevue/dropdown'
+import { defineComponent, } from 'vue'
 import Button from 'primevue/button';
 
 

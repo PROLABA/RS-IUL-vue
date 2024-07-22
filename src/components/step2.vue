@@ -24,6 +24,10 @@
             <div class="doted-content-file-input">
                 <div class="grid-content">
                     <div class="left">
+                        <div v-if="fileSizeError" class="file-error">
+                            <i class="pi pi-exclamation-circle error-icon" style="color: #FC3F3F; font-size: 24px;"></i>
+                            <span v-html="fileSizeError"></span>
+                        </div>
                         <div v-if="selectedFiles.length" style="padding-bottom:17.5px" class="selectedFiles">
                             <ul>
                                 <li v-for="(file, index) in selectedFiles" :key="index">
@@ -35,18 +39,24 @@
                         <input type="file" ref="fileInput" @change="handleFileChange" class="hidden-file-input"
                             multiple>
                         <div class="buttons-item">
-                            <button @click="triggerFileInput" class="custom-file-button">Выберите файл</button>
+                            <div class="flex-item">
+                                <button @click="triggerFileInput" class="custom-file-button">Выберите файл</button>
+                                <span className="select-file">Либо перетащите файл сюда</span>
+
+                            </div>
                             <div class="bottom-item-button">
                                 *Размер файла не должен превышать 80 Мбайт
                             </div>
                         </div>
                     </div>
-                    <div class="rigth">
 
-                        <span className="select-file">Либо перетащите файл сюда</span>
 
-                    </div>
-
+                </div>
+            </div>
+            <div class="btn-footer" style="max-width: 495px; padding-top:20px;">
+                <div className="flex-just-spcbtw">
+                    <Button label="Назад" className="prev" icon="pi pi-arrow-left" text />
+                    <Button className="next" :disabled="isNextButtonDisabled" label="Следующий шаг" />
                 </div>
             </div>
         </div>
@@ -167,7 +177,9 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding-top: 17.5px
+    gap: 10px;
+    padding-top: 17.5px;
+    max-width: 222px
 }
 
 
@@ -182,9 +194,9 @@
 
 }
 
-.grid-content {
-    display: grid;
-    grid-template-columns: 220px 1fr;
+
+.flex-item {
+    display: flex;
     gap: 41px;
     align-items: center;
 }
@@ -193,16 +205,30 @@
     align-self: start;
     padding-top: 15px
 }
+
+.file-error {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.file-error span {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.17;
+    text-align: left;
+    padding-bottom: 15px;
+}
 </style>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { defineComponent, ref, computed } from 'vue'
 import Tooltip from 'primevue/tooltip';
-import FileUpload from 'primevue/fileupload';
+import Button from 'primevue/button';
 
 export default defineComponent({
     name: 'Step2',
-    components: { FileUpload, },
+    components: { Button },
     directives: {
         'tooltip': Tooltip
     },
@@ -213,30 +239,39 @@ export default defineComponent({
      <p>3. Можно загрузить несколько файлов для смет (не более 10 файлов)</p>`;
         const fileInput = ref<HTMLInputElement | null>(null);
         const selectedFiles = ref<File[]>([]);
+        const fileSizeError = ref<string | null>(null);
 
         const triggerFileInput = () => {
             fileInput.value?.click();
         };
 
+        const isNextButtonDisabled = computed(() => {
+            return selectedFiles.value.length === 0;
+        });
+
         const handleFileChange = (event: Event) => {
             const target = event.target as HTMLInputElement;
             if (target.files) {
                 const newFiles = Array.from(target.files);
-                const totalFiles = selectedFiles.value.length + newFiles.length;
-
-                if (totalFiles > 10) {
-                    alert('Можно загрузить максимум 10 файлов.');
-                    return;
-                }
+                const maxSizeInBytes = 80 * 1024 * 1024; // 80 MB
+                const validFiles: File[] = [];
+                let hasError = false;
 
                 for (const file of newFiles) {
-                    if (file.size > 80 * 1024 * 1024) { // 80 Мбайт в байтах
-                        alert(`Файл ${file.name} превышает лимит в 80 Мбайт.`);
-                        return;
+                    if (file.size > maxSizeInBytes) {
+                        fileSizeError.value = 'Файл не был загружен, так как <br> он превышает допустимый размер файла.';
+                        hasError = true;
+                    } else {
+                        validFiles.push(file);
                     }
                 }
 
-                selectedFiles.value = selectedFiles.value.concat(newFiles);
+                if (!hasError) {
+                    fileSizeError.value = null;
+                }
+
+                selectedFiles.value = selectedFiles.value.concat(validFiles);
+
             }
         };
 
@@ -251,6 +286,8 @@ export default defineComponent({
             triggerFileInput,
             handleFileChange,
             removeFile,
+            fileSizeError,
+            isNextButtonDisabled
         };
     }
 })
