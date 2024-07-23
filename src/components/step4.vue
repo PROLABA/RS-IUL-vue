@@ -2,32 +2,35 @@
     <div class="container">
         <div class="white-bg">
             <div class="content-title">
-                <p>Дополните, пожалуйста информацию</p>
-                <img src="/src/assets/img/result3.png" alt="" srcset="">
+                <p>Внесите данные роли </p>
+                <img src="/src/assets/img/result4.png" alt="" srcset="">
                 <!-- <Knob v-model="value" disabled /> -->
 
             </div>
-            <div class="step3-container">
+            <div class="step4-container">
                 <div class="left">
-                    <div className="select-labels">
-                        <p>1. Наименование объекта</p>
-                        <InputText v-model="objectName" id="type-doc" placeholder="Введите наименование"
-                            className="component-input" />
+                    <div class="dotted-continer">
+                        <p className="role">Роль 1</p>
+                        <div className="select-labels">
+                            <p>1. Действие</p>
+                            <Select style="width: 100%;" v-model="action"
+                                placeholder="Выберите соответствующее действие" />
 
-                    </div>
-                    <div className="select-labels">
-                        <p>2. Наименование документа</p>
-                        <InputText v-model="documentName" id="name-doc" placeholder="Введите наименование документа"
-                            className="component-input" />
-                    </div>
-                    <div className="select-labels">
-                        <p>3. Дата</p>
-                        <DatePicker showIcon fluid iconDisplay="input" style="width: 100%;"
-                            placeholder="Выберите или введите дату" v-model="date">
-                            <template #inputicon="slotProps">
-                                <i class="pi pi-angle-down" @click="slotProps.clickCallback" />
-                            </template>
-                        </DatePicker>
+                        </div>
+                        <div className="select-labels">
+                            <p>2. Фамилия</p>
+                            <InputText v-model="surname" id="name-doc" placeholder="Введите наименование документа"
+                                className="component-input" />
+                        </div>
+                        <div className="select-labels">
+                            <p>3. Дата</p>
+                            <DatePicker showIcon fluid iconDisplay="input" style="width: 100%;"
+                                placeholder="Выберите или введите дату" v-model="date">
+                                <template #inputicon="slotProps">
+                                    <i class="pi pi-angle-down" @click="slotProps.clickCallback" />
+                                </template>
+                            </DatePicker>
+                        </div>
                     </div>
                     <div class="btn-footer" style="padding-top:20px;">
                         <div className="flex-just-spcbtw">
@@ -53,66 +56,32 @@
 </template>
 
 <style>
-.step3-container {
+.step4-container {
     display: grid;
     grid-template-columns: 495px 705px;
     gap: 20px;
 }
 
-.title-document-watch {
-    font-size: 16px;
-    font-weight: 700;
-    line-height: 1.17;
-    text-align: center;
-    padding-bottom: 20px;
-}
-
-.dotted-border {
+.dotted-continer {
+    border: 2px dashed #E9E9E9;
     padding: 20px;
-    display: flex;
-    align-items: center;
-    border: 2px dashed #0578D6;
-    border-radius: 4px;
-}
-
-.dotted-border iframe {
-    margin: 0 auto;
-    overflow-x: hidden;
-}
-
-.left {
-    display: flex;
+    display:flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 20px
 }
 
-.component-input {
-    width: 100%;
-    padding: 19px;
-    box-shadow: 0px 4px 8px 0px #0000000D;
-    border: 1.5px solid #E9E9E9;
-    border-radius: 4px;
-    color: black !important;
-}
 
-.p-inputtex {
-    box-shadow: 0px 4px 8px 0px #0000000D !important;
-    border: 1.5px solid #E9E9E9;
-
-
-}
-
-.step3-container input:focus-visible {
+.step4-container input:focus-visible {
     border-color: #E9E9E9 !important;
 }
 
-.step3-container input[placeholder] {
+.step4-container input[placeholder] {
     font-size: 14px !important;
     font-weight: 400;
     color: #B3B3B3;
 }
 
-.step3-container input[value] {
+.step4-container input[value] {
     font-size: 14px !important;
     font-weight: 400;
     color: black;
@@ -120,7 +89,14 @@
     padding: 19px;
 }
 
+.role {
+    color: #333333;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.2px;
+    text-align: left;
 
+}
 
 .p-datepicker-input {
     padding: 19px !important;
@@ -138,17 +114,19 @@ import InputText from 'primevue/inputtext';
 import FloatLabel from "primevue/floatlabel";
 import DatePicker from 'primevue/datepicker';
 import 'primeicons/primeicons.css'
+import Select from 'primevue/select';
 import Knob from 'primevue/knob';
 
 
 export default defineComponent({
-    name: 'Step3',
+    name: 'Step4',
     components: {
         Button,
         InputText,
         FloatLabel,
         DatePicker,
-        Knob
+        Knob,
+        Select
     },
     setup() {
         const date = ref<Date | null>(null);
