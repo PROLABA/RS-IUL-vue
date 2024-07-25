@@ -3,10 +3,13 @@
   <constructorHead />
   <div className="ask-qustion container"><a href="#">Часто задаваемы вопросы</a></div>
   <ConstructorListContent />
-  <Step1/>
-  <Step2/>
-  <Step3/>
-  <Step4/>
+  <Step1 />
+  <Step2 />
+  <Step3 />
+  <Step4 />
+  <Step5 />
+  <Step6 />
+  <stepDone/>
 
 </template>
 <script>
@@ -17,7 +20,9 @@ import Step1 from './components/step1.vue';
 import Step2 from './components/step2.vue';
 import Step3 from "./components/step3.vue"
 import Step4 from "./components/step4.vue"
-
+import Step5 from "./components/step5.vue"
+import Step6 from "./components/step6.vue"
+import stepDone from "./components/stepDone.vue"
 export default defineComponent({
   components: {
     ConstructorHead,
@@ -26,6 +31,10 @@ export default defineComponent({
     Step2,
     Step3,
     Step4,
+    Step5,
+    Step6,
+    stepDone,
+
   }
 })
 </script>

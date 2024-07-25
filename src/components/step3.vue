@@ -22,7 +22,7 @@
                     </div>
                     <div className="select-labels">
                         <p>3. Дата</p>
-                        <DatePicker showIcon fluid iconDisplay="input" style="width: 100%;"
+                        <DatePicker dateFormat="dd/mm/yy" showIcon fluid iconDisplay="input" style="width: 100%;"
                             placeholder="Выберите или введите дату" v-model="date">
                             <template #inputicon="slotProps">
                                 <i class="pi pi-angle-down" @click="slotProps.clickCallback" />
