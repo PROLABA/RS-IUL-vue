@@ -4,6 +4,7 @@ import Aura from '@primevue/themes/aura';
 import App from './App.vue'
 import 'primeicons/primeicons.css';
 import { ru } from './helper/local';
+import router from './router';
 
 const app = createApp(App);
 app.use(PrimeVue, {
@@ -13,4 +14,5 @@ app.use(PrimeVue, {
 
     }
 });
+app.use(router);
 app.mount('#app');

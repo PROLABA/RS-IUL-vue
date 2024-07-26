@@ -10,7 +10,12 @@
             <div class="step4-container">
                 <div class="left">
                     <div v-for="(role, index) in roles" :key="index" class="dotted-continer">
+                        <div class="dflex-just-btwm">
                         <p className="role">Роль {{ index + 1 }}</p>
+                        <div class="delete-btn" @click="deleteRole(index)">
+                            <i class="pi pi-times-circle"  style="font-size: 24px; color: #99CCFF;" v-if="roles.length > 1 && index !== 0 " ></i>
+                        </div>
+                    </div>
                         <div className="select-labels">
                             <p>1. Действие</p>
                             <Select style="width: 100%;" v-model="role.action" :options="actionOption"
@@ -156,6 +161,15 @@
 
 
 }
+.dflex-just-btwm{ 
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.delete-btn i{ 
+    cursor: pointer;
+ }
+
 </style>
 
 <script lang="ts">
@@ -222,6 +236,11 @@ export default defineComponent({
                 surname: '',
                 date: null,
             })
+        },
+        deleteRole(index:number){ 
+            if (this.roles.length > 1 && index !== 0) {
+            this.roles.splice(index, 1);
+            }
         }
     }
 

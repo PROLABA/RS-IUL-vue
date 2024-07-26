@@ -27,7 +27,7 @@
                         </div>
 
                     </div>
-                    <div class="outline-button">
+                    <div  @click="goToStep1" class="outline-button">
                         Выбрать
                     </div>
                 </div>
@@ -51,7 +51,7 @@
                         </div>
 
                     </div>
-                    <div class="outline-button">
+                    <div  @click="goToStep1" class="outline-button">
                         Выбрать
                     </div>
                 </div>
@@ -59,13 +59,18 @@
         </div>
     </div>
 </template>
-<script lang="ts">
+<script >
 import { defineComponent } from 'vue'
 import Image from 'primevue/image';
 export default defineComponent({
     name: 'constructorListContent',
     components: {
         Image,
+    },
+    methods:{
+        goToStep1(){
+        this.$router.push('/step1')
+        }
     }
 })
 </script>
