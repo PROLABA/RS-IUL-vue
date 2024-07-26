@@ -31,8 +31,9 @@
                     </div>
                     <div class="btn-footer" style="padding-top:20px;">
                         <div className="flex-just-spcbtw">
-                            <Button label="Назад" className="prev" icon="pi pi-arrow-left" text />
-                            <Button className="next" :disabled="!isNextButtonEnabled" label="Следующий шаг" />
+                            <Button label="Назад" @click="goToStep2" className="prev" icon="pi pi-arrow-left" text />
+                            <Button className="next" @click="goToStep4" :disabled="!isNextButtonEnabled"
+                                label="Следующий шаг" />
                         </div>
                     </div>
                 </div>
@@ -165,6 +166,14 @@ export default defineComponent({
             documentName,
             isNextButtonEnabled,
         }
+    },
+    methods: {
+        goToStep4() {
+            this.$router.push('/step4')
+        },
+        goToStep2() {
+            this.$router.push('/step2')
+        },
     }
 });
 </script>

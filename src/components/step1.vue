@@ -22,8 +22,8 @@
                         placeholder="Ваш вариант" class="type-document" />
                 </div>
                 <div className="flex-just-spcbtw" v-if="showAdditionalDropdowns">
-                <Button label="Назад" className="prev" icon="pi pi-arrow-left" text />
-                <Button className="next" label="Следующий шаг" />
+                    <Button label="Назад" className="prev" @click="goToStep1" icon="pi pi-arrow-left" text />
+                    <Button className="next" @click="goToStep2" label="Следующий шаг" />
                 </div>
             </div>
         </div>
@@ -70,6 +70,7 @@ button:disabled {
     background: #E9E9E9 !important;
 
 }
+
 .selects {
     display: flex;
     flex-direction: column;
@@ -143,7 +144,7 @@ export default defineComponent({
     name: 'Step1',
     components: {
         Dropdown,
-        Button, 
+        Button,
     },
     setup() {
         const selectedType = ref(null)
@@ -180,6 +181,14 @@ export default defineComponent({
             showAdditionalDropdowns,
             onFirstDropdownChange
         }
+    },
+    methods: {
+        goToStep2() {
+            this.$router.push('/step2')
+        },
+        goToStep1() {
+            this.$router.push('/')
+        },
     }
 })
 </script>

@@ -18,8 +18,9 @@
 
                     <div class="btn-footer" style="padding-top:20px;">
                         <div className="flex-just-spcbtw">
-                            <Button label="Назад" className="prev" icon="pi pi-arrow-left" text />
-                            <Button className="next" :disabled="!isNextButtonEnabled" label="Следующий шаг" />
+                            <Button label="Назад" @click="goToStep4" className="prev" icon="pi pi-arrow-left" text />
+                            <Button className="next" @click="goToStep6" :disabled="!isNextButtonEnabled"
+                                label="Следующий шаг" />
                         </div>
                     </div>
                 </div>
@@ -170,6 +171,14 @@ export default defineComponent({
             selectedEncoding
         }
     },
+    methods: {
+        goToStep6() {
+            this.$router.push('/step6')
+        },
+        goToStep4() {
+            this.$router.push('/step4')
+        },
+    }
 
 });
 

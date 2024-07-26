@@ -11,11 +11,12 @@
                 <div class="left">
                     <div v-for="(role, index) in roles" :key="index" class="dotted-continer">
                         <div class="dflex-just-btwm">
-                        <p className="role">Роль {{ index + 1 }}</p>
-                        <div class="delete-btn" @click="deleteRole(index)">
-                            <i class="pi pi-times-circle"  style="font-size: 24px; color: #99CCFF;" v-if="roles.length > 1 && index !== 0 " ></i>
+                            <p className="role">Роль {{ index + 1 }}</p>
+                            <div class="delete-btn" @click="deleteRole(index)">
+                                <i class="pi pi-times-circle" style="font-size: 24px; color: #99CCFF;"
+                                    v-if="roles.length > 1 && index !== 0"></i>
+                            </div>
                         </div>
-                    </div>
                         <div className="select-labels">
                             <p>1. Действие</p>
                             <Select style="width: 100%;" v-model="role.action" :options="actionOption"
@@ -48,8 +49,8 @@
                     </div>
                     <div class="btn-footer" style="padding-top:20px;">
                         <div className="flex-just-spcbtw">
-                            <Button label="Назад" className="prev" icon="pi pi-arrow-left" text />
-                            <Button className="next" :disabled="!isNextButtonEnabled" label="Следующий шаг" />
+                            <Button label="Назад" @click="goToStep3" className="prev" icon="pi pi-arrow-left" text />
+                            <Button className="next" @click="goToStep5" :disabled="!isNextButtonEnabled" label="Следующий шаг" />
                         </div>
                     </div>
                 </div>
@@ -161,15 +162,16 @@
 
 
 }
-.dflex-just-btwm{ 
+
+.dflex-just-btwm {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
-.delete-btn i{ 
-    cursor: pointer;
- }
 
+.delete-btn i {
+    cursor: pointer;
+}
 </style>
 
 <script lang="ts">
@@ -237,11 +239,17 @@ export default defineComponent({
                 date: null,
             })
         },
-        deleteRole(index:number){ 
+        deleteRole(index: number) {
             if (this.roles.length > 1 && index !== 0) {
-            this.roles.splice(index, 1);
+                this.roles.splice(index, 1);
             }
-        }
+        },
+        goToStep5() {
+            this.$router.push('/step5')
+        },
+        goToStep3() {
+            this.$router.push('/step3')
+        },
     }
 
 });

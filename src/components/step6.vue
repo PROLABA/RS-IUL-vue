@@ -7,8 +7,8 @@
                 <!-- <Knob v-model="value" disabled /> -->
             </div>
             <div className="flex-just-spcbtw" style="max-width: 495px ;">
-                <Button label="Назад" className="prev" icon="pi pi-arrow-left" text />
-                <Button className="next" label="Скачать" />
+                <Button label="Назад" @click="goToStep5" className="prev" icon="pi pi-arrow-left" text />
+                <Button className="next" @click="goToStepDone" label="Скачать" />
             </div>
 
         </div>
@@ -55,6 +55,14 @@ export default defineComponent({
             selectedEncoding
         }
     },
+    methods: {
+        goToStepDone() {
+            this.$router.push('/stepDone')
+        },
+        goToStep5() {
+            this.$router.push('/step4')
+        },
+    }
 
 });
 
