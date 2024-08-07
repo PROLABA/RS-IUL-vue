@@ -55,7 +55,7 @@
             </div>
             <div class="btn-footer" style="max-width: 495px; padding-top:20px;">
                 <div className="flex-just-spcbtw">
-                    <Button label="Назад"   @click="goToStep1" className="prev" icon="pi pi-arrow-left" text />
+                    <Button label="Назад" @click="goToStep1" className="prev" icon="pi pi-arrow-left" text />
                     <Button className="next" @click="goToStep3" :disabled="isNextButtonDisabled"
                         label="Следующий шаг" />
                 </div>
@@ -63,6 +63,98 @@
         </div>
     </div>
 </template>
+
+
+
+<script lang="ts">
+import { defineComponent, ref, computed } from 'vue';
+import { useStore } from 'vuex';
+import Tooltip from 'primevue/tooltip';
+import Button from 'primevue/button';
+import { useRouter } from 'vue-router';
+
+export default defineComponent({
+    name: 'Step2',
+    components: { Button },
+    directives: {
+        'tooltip': Tooltip
+    },
+    setup() {
+        const tooltipContent =
+            `<p>1. Наименование файла должно содержать шифр и наименование своего раздела (например 17513.Раздел1.ПЗ.pdf)</p>
+             <p>2. Расширение docx, doc, xlsx, xls, pdf</p>
+             <p>3. Можно загрузить несколько файлов для смет (не более 10 файлов)</p>`;
+        const fileInput = ref<HTMLInputElement | null>(null);
+        const selectedFiles = ref<File[]>([]);
+        const fileSizeError = ref<string | null>(null);
+        const store = useStore();
+        const router = useRouter();
+
+        const triggerFileInput = () => {
+            fileInput.value?.click();
+        };
+
+        const isNextButtonDisabled = computed(() => {
+            return selectedFiles.value.length === 0;
+        });
+
+        const handleFileChange = (event: Event) => {
+            const target = event.target as HTMLInputElement;
+            if (target.files) {
+                const newFiles = Array.from(target.files);
+                const maxSizeInBytes = 80 * 1024 * 1024; // 80 MB
+                const validFiles: File[] = [];
+                let hasError = false;
+
+                for (const file of newFiles) {
+                    if (file.size > maxSizeInBytes) {
+                        fileSizeError.value = 'Файл не был загружен, так как <br> он превышает допустимый размер файла.';
+                        hasError = true;
+                    } else {
+                        validFiles.push(file);
+                    }
+                }
+
+                if (!hasError) {
+                    fileSizeError.value = null;
+                }
+
+                selectedFiles.value = selectedFiles.value.concat(validFiles);
+            }
+        };
+
+        const removeFile = (index: number) => {
+            selectedFiles.value.splice(index, 1);
+        };
+        console.log(selectedFiles.value);
+        const goToStep3 = async () => {
+            try {
+                await store.dispatch('uploadFile', selectedFiles.value);
+
+                router.push('/step3');
+            } catch (error) {
+                console.error('Error during file upload and navigation:', error);
+            }
+        };
+
+        const goToStep1 = () => {
+            router.push('/step1');
+        };
+        return {
+            tooltipContent,
+            fileInput,
+            selectedFiles,
+            triggerFileInput,
+            handleFileChange,
+            removeFile,
+            fileSizeError,
+            isNextButtonDisabled,
+            goToStep3,
+            goToStep1
+        };
+    }
+});
+</script>
 
 <style>
 .atention p {
@@ -221,83 +313,3 @@
     padding-bottom: 15px;
 }
 </style>
-
-<script lang="ts">
-import { defineComponent, ref, computed } from 'vue'
-import Tooltip from 'primevue/tooltip';
-import Button from 'primevue/button';
-
-export default defineComponent({
-    name: 'Step2',
-    components: { Button },
-    directives: {
-        'tooltip': Tooltip
-    },
-    setup() {
-        const tooltipContent =
-            `<p>1. Наименование файла должно содержать шифр и наименование своего раздела (например 17513.Раздел1.ПЗ.pdf)</p>
-     <p>2. Расширение docx, doc, xlsx, xls, pdf</p>
-     <p>3. Можно загрузить несколько файлов для смет (не более 10 файлов)</p>`;
-        const fileInput = ref<HTMLInputElement | null>(null);
-        const selectedFiles = ref<File[]>([]);
-        const fileSizeError = ref<string | null>(null);
-
-        const triggerFileInput = () => {
-            fileInput.value?.click();
-        };
-
-        const isNextButtonDisabled = computed(() => {
-            return selectedFiles.value.length === 0;
-        });
-
-        const handleFileChange = (event: Event) => {
-            const target = event.target as HTMLInputElement;
-            if (target.files) {
-                const newFiles = Array.from(target.files);
-                const maxSizeInBytes = 80 * 1024 * 1024; // 80 MB
-                const validFiles: File[] = [];
-                let hasError = false;
-
-                for (const file of newFiles) {
-                    if (file.size > maxSizeInBytes) {
-                        fileSizeError.value = 'Файл не был загружен, так как <br> он превышает допустимый размер файла.';
-                        hasError = true;
-                    } else {
-                        validFiles.push(file);
-                    }
-                }
-
-                if (!hasError) {
-                    fileSizeError.value = null;
-                }
-
-                selectedFiles.value = selectedFiles.value.concat(validFiles);
-
-            }
-        };
-
-        const removeFile = (index: number) => {
-            selectedFiles.value.splice(index, 1);
-        };
-
-        return {
-            tooltipContent,
-            fileInput,
-            selectedFiles,
-            triggerFileInput,
-            handleFileChange,
-            removeFile,
-            fileSizeError,
-            isNextButtonDisabled
-        };
-    },
-    methods: {
-        goToStep3() {
-            this.$router.push('/step3')
-        },
-        goToStep1() {
-            this.$router.push('/step1')
-        },
-    }
-})
-</script>

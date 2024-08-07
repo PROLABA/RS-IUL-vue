@@ -6,16 +6,15 @@
   <router-view />
 
 </template>
-<script>
-import { defineComponent } from 'vue'
+<script setup>
+import { defineComponent, watch, ref, computed } from 'vue'
 import ConstructorHead from './components/constructorHead.vue'
+// import { useFetch } from '@vueuse/core'
+// const url = "https://devserv.rsexpertiza.ru/api/document-constructor";
+// const { isFetching, error, data } = useFetch(url, {
+//   refetch: true,
+// }).json();
 
-export default defineComponent({
-  name: 'mainPages',
-  components: {
-    ConstructorHead,
-  }
-})
 </script>
 <style>
 .ask-qustion {

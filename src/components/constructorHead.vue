@@ -52,8 +52,10 @@
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { defineComponent, ref, computed, watch } from 'vue'
 import VideoInstructions from './VideoInstructions.vue'
+
+
 
 export default defineComponent({
     name: 'ConstructorHead',
@@ -62,11 +64,9 @@ export default defineComponent({
     },
     setup() {
         const videoInstructionsRef = ref<InstanceType<typeof VideoInstructions> | null>(null);
-
         const openVideoInstructions = () => {
             videoInstructionsRef.value?.show();
         };
-
         return {
             videoInstructionsRef,
             openVideoInstructions,

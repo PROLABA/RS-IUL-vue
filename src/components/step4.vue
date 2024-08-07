@@ -50,7 +50,8 @@
                     <div class="btn-footer" style="padding-top:20px;">
                         <div className="flex-just-spcbtw">
                             <Button label="Назад" @click="goToStep3" className="prev" icon="pi pi-arrow-left" text />
-                            <Button className="next" @click="goToStep5" :disabled="!isNextButtonEnabled" label="Следующий шаг" />
+                            <Button className="next" @click="goToStep5" :disabled="!isNextButtonEnabled"
+                                label="Следующий шаг" />
                         </div>
                     </div>
                 </div>
