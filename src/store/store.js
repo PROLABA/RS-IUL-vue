@@ -75,11 +75,27 @@ export default createStore({
     },
     async getHTMLDOC({ commit, state }) {
       try {
+        // const formattedData = {
+        //   DOCUMENT_TYPE_ID: state.selectedItems.DOCUMENT_TYPE_ID || 1,
+        //   DOCUMENT_NAME: state.selectedItems.DOCUMENT_NAME || "",
+        //   OBJECT_NAME: state.selectedItems.OBJECT_NAME || "",
+        //   HASH_TYPE: state.selectedItems.HASH_TYPE || "MD5",
+        //   files: state.selectedItems.files?.map(file => ({
+        //     FILE_NAME: file.FILE_NAME || "",
+        //     DOCUMENT_DATE: file.DOCUMENT_DATE || "",
+        //     FILE_SIZE: file.FILE_SIZE || "",
+        //     FILE_HASH: file.FILE_HASH || ""
+        //   })) || [],
+        //   roles: state.selectedItems.roles?.map(role => ({
+        //     ROLE_DATE: role.ROLE_DATE || "",
+        //     ACTION: role.ACTION || "",
+        //     SECOND_NAME: role.SECOND_NAME || ""
+        //   })) || []
+        // };
         const response = await axios.post(
           "https://devserv.rsexpertiza.ru/api/document-constructor/generate/preview",
           JSON.stringify(state.selectedItems)
         );
-        console.log(response.data);
       } catch (error) {
         console.error("Error generating HTML preview:", error);
       }
