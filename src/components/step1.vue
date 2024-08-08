@@ -99,20 +99,13 @@ export default defineComponent({
         const updateSelectedItems = () => {
             // Очистить текущие выбранные элементы
             //  store.commit('clearSelectedItems');
-
-            if (selectedType.value) {
-                store.commit('addSelectedItem', {
-                    DOCUMENT_NAME: selectedType.value.name
-                });
-            }
             if (selectedSection.value) {
                 store.commit('addSelectedItem', {
-                    OBJECT_NAME: selectedSection.value.name
+                    DOCUMENT_NAME: selectedSection.value.name
                 });
-            }
-            if (selectedCustom.value) {
+            }else if (selectedCustom.value) {
                 store.commit('addSelectedItem', {
-                    CUSTOM_VALUE: selectedCustom.value
+                    DOCUMENT_NAME: selectedCustom.value
                 });
             }
         };

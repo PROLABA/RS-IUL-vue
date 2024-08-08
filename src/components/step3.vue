@@ -11,14 +11,14 @@
                 <div class="left">
                     <div className="select-labels">
                         <p>1. Наименование объекта</p>
-                        <InputText v-model="objectName" id="type-doc" placeholder="Введите наименование"
-                            className="component-input" />
+                        <InputText v-model="objectName" @blur="handleBlur" id="type-doc"
+                            placeholder="Введите наименование" className="component-input" />
 
                     </div>
                     <div className="select-labels">
                         <p>2. Наименование документа</p>
-                        <InputText v-model="documentName" id="name-doc" placeholder="Введите наименование документа"
-                            className="component-input" />
+                        <InputText v-model="documentName" disabled id="name-doc"
+                            placeholder="Введите наименование документа" className="component-input" />
                     </div>
                     <div className="select-labels">
                         <p>3. Дата</p>
@@ -43,7 +43,7 @@
                     </div>
                     <div class="document-item">
                         <div class="dotted-border">
-                            <iframe width="471px" height="597px" src="/src/assets/img/doc-sample.png"></iframe>
+                            <div v-html="htmlPreview" style="width: 471px; height: 597px; overflow: auto;"></div>
                         </div>
                     </div>
                 </div>
@@ -133,13 +133,14 @@
 </style>
 
 <script lang="ts">
-import { defineComponent, ref, computed } from 'vue'
+import { defineComponent, ref, computed, onMounted, watch } from 'vue'
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import FloatLabel from "primevue/floatlabel";
 import DatePicker from 'primevue/datepicker';
 import 'primeicons/primeicons.css'
 import Knob from 'primevue/knob';
+import { useStore } from 'vuex';
 
 
 export default defineComponent({
@@ -155,16 +156,41 @@ export default defineComponent({
         const date = ref<Date | null>(null);
         const objectName = ref('');
         const documentName = ref('');
+        const store = useStore();
+        const htmlPreview = ref('');
+
         const isNextButtonEnabled = computed(() => {
             return objectName.value !== '' && documentName.value !== '' && date.value !== null;
         });
-        console.log(isNextButtonEnabled);
+
+        onMounted(async () => {
+            const data = store.getters.getSelectedItems;
+            documentName.value = data?.DOCUMENT_NAME;
+
+            await store.dispatch('getHTMLDOC');
+            console.log(store.state.htmlPreview);
+            htmlPreview.value = store.state.htmlPreview;
+        });
+
+        const handleBlur = async () => {
+            store.commit('addSelectedItem', {
+                OBJECT_NAME: objectName.value,
+            });
+            await store.dispatch('getHTMLDOC');
+            htmlPreview.value = store.state.htmlPreview;
+        };
+        watch([objectName, date], async () => {
+            await store.dispatch('getHTMLDOC');
+            htmlPreview.value = store.state.htmlPreview;
+        }, { deep: true });
 
         return {
             date,
             objectName,
             documentName,
             isNextButtonEnabled,
+            handleBlur,
+            htmlPreview
         }
     },
     methods: {

@@ -126,11 +126,10 @@ export default defineComponent({
         const removeFile = (index: number) => {
             selectedFiles.value.splice(index, 1);
         };
-        console.log(selectedFiles.value);
         const goToStep3 = async () => {
             try {
                 await store.dispatch('uploadFile', selectedFiles.value);
-
+                
                 router.push('/step3');
             } catch (error) {
                 console.error('Error during file upload and navigation:', error);
