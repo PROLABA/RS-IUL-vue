@@ -61,7 +61,7 @@
                     </div>
                     <div class="document-item">
                         <div class="dotted-border">
-                            <iframe width="471px" height="597px" src="/src/assets/img/doc-sample.png"></iframe>
+                            <iframe width="471px" height="597px" :srcdoc="htmlPreview"></iframe>
                         </div>
                     </div>
                 </div>
@@ -176,7 +176,7 @@
 </style>
 
 <script lang="ts">
-import { defineComponent, ref, computed } from 'vue'
+import { defineComponent, ref, computed, watch, onMounted } from 'vue'
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import FloatLabel from "primevue/floatlabel";
@@ -184,7 +184,8 @@ import DatePicker from 'primevue/datepicker';
 import 'primeicons/primeicons.css'
 import Select from 'primevue/select';
 import Knob from 'primevue/knob';
-
+import { formatDateDDMMYY } from "../helpers/formatedData"
+import { useStore } from 'vuex';
 
 export default defineComponent({
     name: 'Step4',
@@ -201,12 +202,22 @@ export default defineComponent({
         const date = ref<Date | null>(null);
         const action = ref('');
         const surname = ref('');
+        const store = useStore()
+        const actionOption = ref<{ name: string, value: string }[]>([]);
 
-        const actionOption = ref([
-            { name: 'Выполнить', value: '1' },
-            { name: 'Выполнить2', value: '1' },
-        ]);
-
+        onMounted(async () => {
+            try {
+                await store.dispatch('fetchData');
+                const data = store.getters.getData;
+                const stepData = data.step_5.elements["48270"].list;
+                actionOption.value = Object.entries(stepData).map(([key, value]) => ({
+                    name: value,
+                    value: key
+                }));
+            } catch (error) {
+                console.error('Ошибка при загрузке данных:', error);
+            }
+        });
 
         return {
             date,
@@ -229,21 +240,43 @@ export default defineComponent({
     computed: {
         isNextButtonEnabled() {
             return this.roles.every(role => role.action !== '' && role.surname !== '' && role.date !== null);
+        },
+        htmlPreview() {
+            return this.$store.state.htmlPreview;
+        }
+    },
+    watch: {
+        roles: {
+            deep: true,
+            handler() {
+                this.updateRolesInStore();
+            }
         }
     },
     methods: {
         addRole() {
-
             this.roles.push({
                 action: '',
                 surname: '',
                 date: null,
-            })
+            });
+            this.updateRolesInStore();
+        },
+        updateRolesInStore() {
+            const formattedRoles = this.roles.map(role => ({
+                ROLE_DATE: formatDateDDMMYY(role.date),
+                ACTION: role.action.name,
+                SECOND_NAME: role.surname
+            }));
+            this.$store.commit('addSelectedItem', { roles: formattedRoles });
+            this.$store.dispatch('getHTMLDOC');
+
         },
         deleteRole(index: number) {
             if (this.roles.length > 1 && index !== 0) {
                 this.roles.splice(index, 1);
             }
+            this.updateRolesInStore();
         },
         goToStep5() {
             this.$router.push('/step5')

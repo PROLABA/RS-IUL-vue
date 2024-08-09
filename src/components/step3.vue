@@ -43,7 +43,9 @@
                     </div>
                     <div class="document-item">
                         <div class="dotted-border">
-                            <div v-html="htmlPreview" style="width: 471px; height: 597px; overflow: auto;"></div>
+                            <!-- <iframe src="" frameborder="0">{{ htmlPreview }}</iframe> -->
+                            <iframe :src="iframeSource"></iframe>
+                            <!-- <div class="bhtml" v-html="htmlPreview"></div> -->
                         </div>
                     </div>
                 </div>
@@ -54,6 +56,12 @@
 </template>
 
 <style>
+.bhtml {
+    width: 100%;
+    height: 100%;
+    overflow: scroll;
+}
+
 .step3-container {
     display: grid;
     grid-template-columns: 495px 705px;
@@ -70,16 +78,13 @@
 
 .dotted-border {
     padding: 20px;
-    display: flex;
-    align-items: center;
+    box-sizing: border-box;
+    text-align: center;
     border: 2px dashed #0578D6;
     border-radius: 4px;
 }
 
-.dotted-border iframe {
-    margin: 0 auto;
-    overflow-x: hidden;
-}
+
 
 .left {
     display: flex;
@@ -121,6 +126,11 @@
     padding: 19px;
 }
 
+iframe {
+    width: 100%;
+    height: 500px;
+
+}
 
 
 .p-datepicker-input {
@@ -133,7 +143,7 @@
 </style>
 
 <script lang="ts">
-import { defineComponent, ref, computed, onMounted, watch } from 'vue'
+import { defineComponent, ref, computed, onMounted, watch, onBeforeUnmount } from 'vue'
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import FloatLabel from "primevue/floatlabel";
@@ -153,7 +163,7 @@ export default defineComponent({
         Knob
     },
     setup() {
-        const date = ref<Date | null>(null);
+        const date = ref();
         const objectName = ref('');
         const documentName = ref('');
         const store = useStore();
@@ -162,13 +172,17 @@ export default defineComponent({
         const isNextButtonEnabled = computed(() => {
             return objectName.value !== '' && documentName.value !== '' && date.value !== null;
         });
-
+        const iframeSource = computed(() => {
+            return URL.createObjectURL(new Blob([htmlPreview.value], { type: 'text/html' }));
+        });
+        onBeforeUnmount(() => {
+            URL.revokeObjectURL(iframeSource.value);
+        });
         onMounted(async () => {
             const data = store.getters.getSelectedItems;
             documentName.value = data?.DOCUMENT_NAME;
 
             await store.dispatch('getHTMLDOC');
-            console.log(store.state.htmlPreview);
             htmlPreview.value = store.state.htmlPreview;
         });
 
@@ -190,7 +204,8 @@ export default defineComponent({
             documentName,
             isNextButtonEnabled,
             handleBlur,
-            htmlPreview
+            htmlPreview,
+            iframeSource
         }
     },
     methods: {
@@ -200,6 +215,7 @@ export default defineComponent({
         goToStep2() {
             this.$router.push('/step2')
         },
-    }
+    },
+
 });
 </script>

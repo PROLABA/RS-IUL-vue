@@ -19,8 +19,7 @@
                     <div class="btn-footer" style="padding-top:20px;">
                         <div className="flex-just-spcbtw">
                             <Button label="Назад" @click="goToStep4" className="prev" icon="pi pi-arrow-left" text />
-                            <Button className="next" @click="goToStep6" :disabled="!isNextButtonEnabled"
-                                label="Следующий шаг" />
+                            <Button className="next" @click="goToStep6" label="Следующий шаг" />
                         </div>
                     </div>
                 </div>
@@ -30,7 +29,7 @@
                     </div>
                     <div class="document-item">
                         <div class="dotted-border">
-                            <iframe width="471px" height="597px" src="/src/assets/img/doc-sample.png"></iframe>
+                            <iframe width="471px" height="597px" frameborder="0" :srcdoc="htmlPreview"></iframe>
                         </div>
                     </div>
                 </div>
@@ -135,40 +134,67 @@
 </style>
 
 <script lang="ts">
-import { defineComponent, ref, computed } from 'vue'
+import { defineComponent, ref, computed, onMounted, watch } from 'vue'
 import Button from 'primevue/button';
-import InputText from 'primevue/inputtext';
-import FloatLabel from "primevue/floatlabel";
-import DatePicker from 'primevue/datepicker';
-import 'primeicons/primeicons.css'
 import Select from 'primevue/select';
-
+import { useStore } from "vuex";
 
 export default defineComponent({
     name: 'Step5',
     components: {
         Button,
-        InputText,
-        FloatLabel,
-        DatePicker,
         Select
     },
 
     setup() {
-        const selectedEncoding = ref('')
-        const encoding = ref([
-            { name: ' MD5', value: "md5" },
-            { name: 'MD6', value: "md6" },
-        ])
-        const isNextButtonEnabled = computed(() => {
-            return selectedEncoding.value !== "";
+        const selectedEncoding = ref<{ name: string, value: string } | null>(null);
+        const encoding = ref<{ name: string, value: string }[]>([]);
+        const store = useStore();
+
+        const fetchHtmlPreview = async () => {
+            try {
+                await store.dispatch('getHTMLDOC');
+                console.log('HTML preview fetched');
+            } catch (error) {
+                console.error('Ошибка при загрузке HTML-превью:', error);
+            }
+        };
+
+        onMounted(async () => {
+            try {
+                await store.dispatch('fetchData');
+                const data = store.getters.getData;
+                const stepData = data.step_6.elements[48274].list;
+                encoding.value = Object.entries(stepData).map(([key, value]) => ({
+                    name: value,
+                    value: key
+                }));
+                console.log('Step Data:', stepData);
+                await fetchHtmlPreview();
+            } catch (error) {
+                console.error('Ошибка при загрузке данных:', error);
+                await fetchHtmlPreview();
+            }
         });
 
-
+        watch(selectedEncoding, async (newValue) => {
+            console.log('Selected Encoding changed:', newValue);
+            if (newValue && newValue.name) {
+                store.commit('addSelectedItem', { HASH_TYPE: newValue.name });
+                console.log('Committed HASH_TYPE:', newValue.name);
+                await fetchHtmlPreview();  // Добавляем вызов функции для обновления предпросмотра
+            }
+        });
         return {
             encoding,
-            isNextButtonEnabled,
-            selectedEncoding
+            selectedEncoding,
+            htmlPreview: computed(() => store.state.htmlPreview),
+
+        };
+    },
+    computed: {
+        htmlPreview() {
+            return this.$store.state.htmlPreview;
         }
     },
     methods: {
@@ -179,7 +205,6 @@ export default defineComponent({
             this.$router.push('/step4')
         },
     }
-
 });
 
 </script>

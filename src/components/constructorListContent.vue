@@ -65,7 +65,8 @@ export default defineComponent({
         });
         return {
             store,
-            stepData, loading
+            stepData,
+             loading
         }
     },
     computed: {
