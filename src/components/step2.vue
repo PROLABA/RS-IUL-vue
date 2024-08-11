@@ -1,63 +1,71 @@
 <template>
     <div class="container">
         <div class="white-bg">
-            <div class="content-title atention">
-                <p>
-                    <span>
-                        <i v-tooltip.top="{
-                            value: tooltipContent,
-                            escape: false,
-
-                            pt: {
-                                arrow: {
-                                    style: {
-                                        borderBottomColor: '#FFFFFFFF'
-                                    }
-                                },
-                            }
-                        }
-                            " class="pi pi-exclamation-circle"></i>
-                    </span>Загрузите файл раздела проектной документации
-                </p>
-                <img src="/src/assets/img/result2.png" alt="" srcset="">
-            </div>
-            <div class="doted-content-file-input">
-                <div class="grid-content">
-                    <div class="left">
-                        <div v-if="fileSizeError" class="file-error">
-                            <i class="pi pi-exclamation-circle error-icon" style="color: #FC3F3F; font-size: 24px;"></i>
-                            <span v-html="fileSizeError"></span>
-                        </div>
-                        <div v-if="selectedFiles.length" style="padding-bottom:17.5px" class="selectedFiles">
-                            <ul>
-                                <li v-for="(file, index) in selectedFiles" :key="index">
-                                    {{ file.name }}
-                                    <button @click="removeFile(index)" class="pi pi-times"></button>
-                                </li>
-                            </ul>
-                        </div>
-                        <input type="file" ref="fileInput" @change="handleFileChange" class="hidden-file-input"
-                            multiple>
-                        <div class="buttons-item">
-                            <div class="flex-item">
-                                <button @click="triggerFileInput" class="custom-file-button">Выберите файл</button>
-                                <span className="select-file">Либо перетащите файл сюда</span>
-
-                            </div>
-                            <div class="bottom-item-button">
-                                *Размер файла не должен превышать 80 Мбайт
-                            </div>
-                        </div>
-                    </div>
-
-
+            <div v-if="isLoading" class="spinner-container">
+                <div class="container-spinner">
+                    <ProgressSpinner />
                 </div>
             </div>
-            <div class="btn-footer" style="max-width: 495px; padding-top:20px;">
-                <div className="flex-just-spcbtw">
-                    <Button label="Назад" @click="goToStep1" className="prev" icon="pi pi-arrow-left" text />
-                    <Button className="next" @click="goToStep3" :disabled="isNextButtonDisabled"
-                        label="Следующий шаг" />
+            <div v-else class="content-type">
+                <div class="content-title atention">
+                    <p>
+                        <span>
+                            <i v-tooltip.top="{
+                                value: tooltipContent,
+                                escape: false,
+
+                                pt: {
+                                    arrow: {
+                                        style: {
+                                            borderBottomColor: '#FFFFFFFF'
+                                        }
+                                    },
+                                }
+                            }
+                                " class="pi pi-exclamation-circle"></i>
+                        </span>Загрузите файл раздела проектной документации
+                    </p>
+                    <img src="/src/assets/img/result2.png" alt="" srcset="">
+                </div>
+                <div class="doted-content-file-input">
+                    <div class="grid-content">
+                        <div class="left">
+                            <div v-if="fileSizeError" class="file-error">
+                                <i class="pi pi-exclamation-circle error-icon"
+                                    style="color: #FC3F3F; font-size: 24px;"></i>
+                                <span v-html="fileSizeError"></span>
+                            </div>
+                            <div v-if="selectedFiles.length" style="padding-bottom:17.5px" class="selectedFiles">
+                                <ul>
+                                    <li v-for="(file, index) in selectedFiles" :key="index">
+                                        {{ file.name }}
+                                        <button @click="removeFile(index)" class="pi pi-times"></button>
+                                    </li>
+                                </ul>
+                            </div>
+                            <input type="file" ref="fileInput" @change="handleFileChange" class="hidden-file-input"
+                                multiple>
+                            <div class="buttons-item">
+                                <div class="flex-item">
+                                    <button @click="triggerFileInput" class="custom-file-button">Выберите файл</button>
+                                    <span className="select-file">Либо перетащите файл сюда</span>
+
+                                </div>
+                                <div class="bottom-item-button">
+                                    *Размер файла не должен превышать 80 Мбайт
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+                <div class="btn-footer" style="max-width: 495px; padding-top:20px;">
+                    <div className="flex-just-spcbtw">
+                        <Button label="Назад" @click="goToStep1" className="prev" icon="pi pi-arrow-left" text />
+                        <Button className="next" @click="goToStep3" :disabled="isNextButtonDisabled"
+                            label="Следующий шаг" />
+                    </div>
                 </div>
             </div>
         </div>
@@ -71,11 +79,12 @@ import { defineComponent, ref, computed } from 'vue';
 import { useStore } from 'vuex';
 import Tooltip from 'primevue/tooltip';
 import Button from 'primevue/button';
+import ProgressSpinner from 'primevue/progressspinner';
 import { useRouter } from 'vue-router';
 
 export default defineComponent({
     name: 'Step2',
-    components: { Button },
+    components: { Button, ProgressSpinner },
     directives: {
         'tooltip': Tooltip
     },
@@ -89,6 +98,7 @@ export default defineComponent({
         const fileSizeError = ref<string | null>(null);
         const store = useStore();
         const router = useRouter();
+        const isLoading = ref(false);
 
         const triggerFileInput = () => {
             fileInput.value?.click();
@@ -127,15 +137,16 @@ export default defineComponent({
             selectedFiles.value.splice(index, 1);
         };
         const goToStep3 = async () => {
+            isLoading.value = true;
             try {
                 await store.dispatch('uploadFile', selectedFiles.value);
-                
                 router.push('/step3');
             } catch (error) {
                 console.error('Error during file upload and navigation:', error);
+            } finally {
+                isLoading.value = false;
             }
-        };
-
+        }
         const goToStep1 = () => {
             router.push('/step1');
         };
@@ -149,7 +160,8 @@ export default defineComponent({
             fileSizeError,
             isNextButtonDisabled,
             goToStep3,
-            goToStep1
+            goToStep1,
+            isLoading
         };
     }
 });

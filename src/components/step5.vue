@@ -27,9 +27,62 @@
                     <div class="title-document-watch">
                         Предпросмотр ИУЛ
                     </div>
+                    <div class="pag-container">
+                        <div class="pagination-doc">
+                            <button class='swiper-button-prev2'>
+                                <svg width='20' height='11' viewBox='0 0 20 11' fill='none'
+                                    xmlns='http://www.w3.org/2000/svg'>
+                                    <path fill-rule='evenodd' clip-rule='evenodd'
+                                        d='M4.81218 10.7812L0.211729 6.02812C-0.0705776 5.73645 -0.0705776 5.26355 0.211729 4.97188L4.81218 0.218757C5.09449 -0.0729189 5.5522 -0.0729189 5.83451 0.218757C6.11681 0.510432 6.11681 0.983331 5.83451 1.27501L2.46811 4.75312L20 4.75312V6.24688L2.46811 6.24688L5.83451 9.72499C6.11681 10.0167 6.11681 10.4896 5.83451 10.7812C5.5522 11.0729 5.09449 11.0729 4.81218 10.7812Z'
+                                        fill='#333333' />
+                                </svg>
+                            </button>
+                            <div class="swiper-pagination-custom"></div>
+                            <button class='swiper-button-next2'>
+                                <svg width='20' height='11' viewBox='0 0 20 11' fill='none'
+                                    xmlns='http://www.w3.org/2000/svg'>
+                                    <path fill-rule='evenodd' clip-rule='evenodd'
+                                        d='M15.1878 0.218756L19.7883 4.97188C20.0706 5.26355 20.0706 5.73645 19.7883 6.02812L15.1878 10.7812C14.9055 11.0729 14.4478 11.0729 14.1655 10.7812C13.8832 10.4896 13.8832 10.0167 14.1655 9.72499L17.5319 6.24688H0L0 4.75312H17.5319L14.1655 1.27501C13.8832 0.98333 13.8832 0.510432 14.1655 0.218756C14.4478 -0.0729188 14.9055 -0.0729188 15.1878 0.218756Z'
+                                        fill='#333333' />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
                     <div class="document-item">
                         <div class="dotted-border">
-                            <iframe width="471px" height="597px" frameborder="0" :srcdoc="htmlPreview"></iframe>
+                            <button class="additional-prev"><svg width='20' height='11' viewBox='0 0 20 11' fill='none'
+                                    xmlns='http://www.w3.org/2000/svg'>
+                                    <path fill-rule='evenodd' clip-rule='evenodd'
+                                        d='M4.81218 10.7812L0.211729 6.02812C-0.0705776 5.73645 -0.0705776 5.26355 0.211729 4.97188L4.81218 0.218757C5.09449 -0.0729189 5.5522 -0.0729189 5.83451 0.218757C6.11681 0.510432 6.11681 0.983331 5.83451 1.27501L2.46811 4.75312L20 4.75312V6.24688L2.46811 6.24688L5.83451 9.72499C6.11681 10.0167 6.11681 10.4896 5.83451 10.7812C5.5522 11.0729 5.09449 11.0729 4.81218 10.7812Z'
+                                        fill='#333333' />
+                                </svg></button>
+
+                            <Swiper :modules="[Navigation, Pagination]" :navigation="{
+                                nextEl: '.swiper-button-next2, .additional-next',
+                                prevEl: '.swiper-button-prev2, .additional-prev'
+                            }" :pagination="{
+                                el: '.swiper-pagination-custom',
+                                type: 'custom',
+                                renderCustom: function (swiper, current, total) {
+                                    return `
+                <div class='custom-pagination'>              
+                    <span>${current} из ${total}</span>
+                </div>
+            `;
+                                }
+                            }">
+                                <SwiperSlide v-for="(preview, index) in htmlPreview" :key="index">
+                                    <iframe width="471px" height="597px" :srcdoc="preview"></iframe>
+                                </SwiperSlide>
+
+                            </Swiper>
+                            <button class="additional-next"> <svg width='20' height='11' viewBox='0 0 20 11' fill='none'
+                                    xmlns='http://www.w3.org/2000/svg'>
+                                    <path fill-rule='evenodd' clip-rule='evenodd'
+                                        d='M15.1878 0.218756L19.7883 4.97188C20.0706 5.26355 20.0706 5.73645 19.7883 6.02812L15.1878 10.7812C14.9055 11.0729 14.4478 11.0729 14.1655 10.7812C13.8832 10.4896 13.8832 10.0167 14.1655 9.72499L17.5319 6.24688H0L0 4.75312H17.5319L14.1655 1.27501C13.8832 0.98333 13.8832 0.510432 14.1655 0.218756C14.4478 -0.0729188 14.9055 -0.0729188 15.1878 0.218756Z'
+                                        fill='#333333' />
+                                </svg>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -138,23 +191,28 @@ import { defineComponent, ref, computed, onMounted, watch } from 'vue'
 import Button from 'primevue/button';
 import Select from 'primevue/select';
 import { useStore } from "vuex";
+import { Swiper, SwiperSlide } from 'swiper/vue';
+import 'swiper/swiper-bundle.css';
+import { Navigation, Pagination } from 'swiper/modules';
+import { isEqual } from 'lodash';
 
 export default defineComponent({
     name: 'Step5',
     components: {
         Button,
-        Select
+        Select,
+        Swiper,
+        SwiperSlide
     },
 
     setup() {
         const selectedEncoding = ref<{ name: string, value: string } | null>(null);
         const encoding = ref<{ name: string, value: string }[]>([]);
         const store = useStore();
-
+        const filesInfoHash = computed(() => store.state.filesInfoHash);
         const fetchHtmlPreview = async () => {
             try {
                 await store.dispatch('getHTMLDOC');
-                console.log('HTML preview fetched');
             } catch (error) {
                 console.error('Ошибка при загрузке HTML-превью:', error);
             }
@@ -169,27 +227,32 @@ export default defineComponent({
                     name: value,
                     value: key
                 }));
-                console.log('Step Data:', stepData);
                 await fetchHtmlPreview();
             } catch (error) {
                 console.error('Ошибка при загрузке данных:', error);
                 await fetchHtmlPreview();
             }
         });
+        let previousData = null;
 
         watch(selectedEncoding, async (newValue) => {
-            console.log('Selected Encoding changed:', newValue);
             if (newValue && newValue.name) {
-                store.commit('addSelectedItem', { HASH_TYPE: newValue.name });
-                console.log('Committed HASH_TYPE:', newValue.name);
-                await fetchHtmlPreview();  // Добавляем вызов функции для обновления предпросмотра
+                const selectedEncoding = newValue.name || "MD5";
+
+                const newHashes = filesInfoHash.value.FILE_HASH.map((fileHash) => ({
+                    FILE_HASH: fileHash[selectedEncoding],
+                }));
+
+                store.commit('updateFileHashes', { newHashes, selectedEncoding });
+                await fetchHtmlPreview();
             }
         });
         return {
             encoding,
             selectedEncoding,
             htmlPreview: computed(() => store.state.htmlPreview),
-
+            Navigation,
+            Pagination,
         };
     },
     computed: {
