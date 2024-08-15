@@ -11,7 +11,8 @@ const app = createApp(App);
 app.use(PrimeVue, {
     locale: ru,
     theme: {
-        preset: Aura
+        preset: Aura,
+        colorScheme: 'light'
 
     }
 });

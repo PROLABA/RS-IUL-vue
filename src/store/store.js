@@ -74,11 +74,9 @@ export default createStore({
     },
     updateFileHashes(state, { newHashes, selectedEncoding }) {
       if (state.selectedItems.files) {
-        state.selectedItems.files = state.selectedItems.files.map((file) => ({
+        state.selectedItems.files = state.selectedItems.files.map((file, index) => ({
           ...file,
-          FILE_HASH:
-            newHashes.find((hash) => hash.FILE_HASH)?.FILE_HASH ||
-            file.FILE_HASH,
+          FILE_HASH: newHashes[index]?.FILE_HASH || file.FILE_HASH,
         }));
       }
       state.selectedItems.HASH_TYPE = selectedEncoding;
@@ -164,43 +162,24 @@ export default createStore({
     },
     async downloadDocument({ state }) {
       try {
-        const response = await axios({
-          method: "post",
-          url: "https://devserv.rsexpertiza.ru/api/document-constructor/file",
-          data: JSON.stringify(state.selectedItems),
-          responseType: "blob",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        const response = await axios.post(
+          "https://devserv.rsexpertiza.ru/api/document-constructor/generate/file",
+          JSON.stringify(state.selectedItems)
+        );
 
-        // Создаем ссылку для скачивания
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-        const link = document.createElement("a");
-        link.href = url;
+        if (response.data && response.data.data) {
+          const downloadUrl = `https://devserv.rsexpertiza.ru${response.data.data}`;
 
-        // Получаем имя файла из заголовков ответа, если оно там есть
-        const contentDisposition = response.headers["content-disposition"];
-        let fileName = "document.pdf"; // Имя файла по умолчанию
-        if (contentDisposition) {
-          const fileNameMatch = contentDisposition.match(/filename="?(.+)"?/i);
-          if (fileNameMatch && fileNameMatch.length === 2) {
-            fileName = fileNameMatch[1];
-          }
+          // Open the URL in a new window
+          window.open(downloadUrl, '_blank');
+        } else {
+          throw new Error("Download URL not found in the response");
         }
-
-        link.setAttribute("download", fileName);
-        document.body.appendChild(link);
-        link.click();
-
-        // Очистка
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(link);
       } catch (error) {
         console.error("Error downloading document:", error);
         throw error;
       }
-    },
+    }
   },
   getters: {
     getData: (state) => state.data,

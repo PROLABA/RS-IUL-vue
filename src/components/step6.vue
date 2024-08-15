@@ -22,6 +22,7 @@ import DatePicker from 'primevue/datepicker';
 import 'primeicons/primeicons.css'
 import Select from 'primevue/select';
 import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
 
 export default defineComponent({
     name: 'Step6',
@@ -40,6 +41,7 @@ export default defineComponent({
             { name: ' MD5', value: "md5" },
             { name: 'MD6', value: "md6" },
         ])
+        const router = useRouter();
         const isNextButtonEnabled = computed(() => {
             return selectedEncoding.value !== "";
         });
@@ -56,12 +58,11 @@ export default defineComponent({
         };
 
         const goToStepDone = () => {
-            // Используйте router для перехода
-            store.state.router.push('/stepDone');
+            router.push('/stepDone');
         };
 
         const goToStep5 = () => {
-            store.state.router.push('/step4');
+            router.push('/step4');
         };
 
         return {
