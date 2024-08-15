@@ -179,6 +179,22 @@ export default createStore({
         console.error("Error downloading document:", error);
         throw error;
       }
+    },
+    async getVersions({ commit, state }) {
+      try {
+        const response = await axios.get(
+          "https://devserv.rsexpertiza.ru/api/document-constructor/versions?id=20",
+        );
+        const newData = JSON.parse(response.data.data["0"].json);
+        console.log(newData);
+        if (newData) {
+          commit('clearSelectedItems');
+          commit('addSelectedItem', newData);
+        }
+      } catch (error) {
+        console.error("Error gettingVersionsToEdit:", error);
+        throw error;
+      }
     }
   },
   getters: {

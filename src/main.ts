@@ -12,9 +12,10 @@ app.use(PrimeVue, {
     locale: ru,
     theme: {
         preset: Aura,
-        colorScheme: 'light'
+        colorScheme: 'light',
 
     }
+
 });
 app.use(router);
 app.use(store);

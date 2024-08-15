@@ -18,8 +18,9 @@
             <div class="acsess-description ">
                 <div class="acsess-title">Ваш ИУЛ скачан в папку «Загрузки» на Ваш компьютер. </div>
                 <div class="btn-container">
-                    <Button label="Редактировать" className="edit-btn" />
-                    <Button label="Оформить новый ИУЛ" className="create-new-iul" />
+                    <Button style="cursor: pointer;" label="Редактировать" className="edit-btn"
+                        @click="goToEditStepOne" />
+                    <Button style="cursor: pointer;" label="Оформить новый ИУЛ" className="create-new-iul" @click="goToStep1" />
                 </div>
                 <div class="acsess-sub-title">Вы можете скачать ИУЛ повторно или отредактировать в «Моих документах».
                 </div>
@@ -116,10 +117,35 @@
 <script lang="ts">
 import { defineComponent, } from 'vue'
 import Button from 'primevue/button';
+import { useRouter } from 'vue-router';
+import { useStore } from 'vuex';
+
 export default defineComponent({
     name: 'stepDone',
-    components: { Button }
+    components: { Button },
+    setup() {
+        const router = useRouter();
+        const store = useStore();
 
+        const goToEditStepOne = async () => {
+            try {
+                await store.dispatch('getVersions');
+                router.push('/');
+            } catch (error) {
+                console.error("Error getting versions:", error);
+            }
+        };
 
+        const goToStep1 = () => {
+            store.commit('clearSelectedItems');
+            router.push('/');
+        };
+
+        return {
+            goToEditStepOne,
+            goToStep1
+        };
+    }
 });
+
 </script>
