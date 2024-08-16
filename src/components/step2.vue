@@ -75,7 +75,7 @@
 
 
 <script lang="ts">
-import { defineComponent, ref, computed } from 'vue';
+import { defineComponent, ref, computed, watchEffect } from 'vue';
 import { useStore } from 'vuex';
 import Tooltip from 'primevue/tooltip';
 import Button from 'primevue/button';
@@ -91,14 +91,29 @@ export default defineComponent({
     setup() {
         const tooltipContent =
             `<p>1. Наименование файла должно содержать шифр и наименование своего раздела (например 17513.Раздел1.ПЗ.pdf)</p>
-             <p>2. Расширение docx, doc, xlsx, xls, pdf</p>
-             <p>3. Можно загрузить несколько файлов для смет (не более 10 файлов)</p>`;
+         <p>2. Расширение docx, doc, xlsx, xls, pdf</p>
+         <p>3. Можно загрузить несколько файлов для смет (не более 10 файлов)</p>`;
         const fileInput = ref<HTMLInputElement | null>(null);
         const selectedFiles = ref<File[]>([]);
         const fileSizeError = ref<string | null>(null);
         const store = useStore();
         const router = useRouter();
         const isLoading = ref(false);
+
+        // Map files from filesInfoHash to selectedFiles
+        const mappedFiles = computed(() => {
+            const files = store.state.selectedItems.files || [];
+            return files.map(file => ({
+                name: file.FILE_NAME,
+                size: file.FILE_SIZE,
+                hash: file.FILE_HASH,
+            }));
+        });
+
+        // Combine mapped files with newly selected files
+        watchEffect(() => {
+            selectedFiles.value = [...mappedFiles.value, ...selectedFiles.value];
+        });
 
         const triggerFileInput = () => {
             fileInput.value?.click();
@@ -136,6 +151,7 @@ export default defineComponent({
         const removeFile = (index: number) => {
             selectedFiles.value.splice(index, 1);
         };
+
         const goToStep3 = async () => {
             isLoading.value = true;
             try {
@@ -146,10 +162,12 @@ export default defineComponent({
             } finally {
                 isLoading.value = false;
             }
-        }
+        };
+
         const goToStep1 = () => {
             router.push('/step1');
         };
+
         return {
             tooltipContent,
             fileInput,

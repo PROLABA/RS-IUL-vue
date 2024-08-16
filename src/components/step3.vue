@@ -22,7 +22,7 @@
                     </div>
                     <div className="select-labels">
                         <p>3. Дата</p>
-                        <DatePicker dateFormat="dd/mm/yy" showIcon fluid iconDisplay="input" style="width: 100%;"
+                        <DatePicker dateFormat="dd.mm.yy" showIcon fluid iconDisplay="input" style="width: 100%;"
                             placeholder="Выберите или введите дату" v-model="date">
                             <template #inputicon="slotProps">
                                 <i class="pi pi-angle-down" @click="slotProps.clickCallback" />
@@ -108,7 +108,106 @@
     </div>
 </template>
 
+
+
+<script lang="ts">
+import { defineComponent, ref, computed, onMounted, watch, onBeforeUnmount } from 'vue'
+import Button from 'primevue/button';
+import InputText from 'primevue/inputtext';
+import FloatLabel from "primevue/floatlabel";
+import DatePicker from 'primevue/datepicker';
+import 'primeicons/primeicons.css'
+import Knob from 'primevue/knob';
+import { useStore } from 'vuex';
+import { Swiper, SwiperSlide } from 'swiper/vue';
+import 'swiper/swiper-bundle.css';
+import { Navigation, Pagination } from 'swiper/modules';
+
+
+
+
+export default defineComponent({
+    name: 'Step3',
+    components: {
+        Button,
+        InputText,
+        FloatLabel,
+        DatePicker,
+        Knob,
+        Swiper,
+        SwiperSlide
+    },
+    setup() {
+        const date = ref();
+        const store = useStore();
+
+        const fileDataSelected = store.state.selectedItems.OBJECT_NAME
+        const objectName = ref('' || fileDataSelected);
+        const documentName = ref('');
+        const htmlPreview = ref('');
+
+        const isNextButtonEnabled = computed(() => {
+            return objectName.value !== '' && documentName.value !== '' && date.value !== null;
+        });
+        const iframeSource = computed(() => {
+            return URL.createObjectURL(new Blob([htmlPreview.value], { type: 'text/html' }));
+        });
+        onBeforeUnmount(() => {
+            URL.revokeObjectURL(iframeSource.value);
+        });
+        onMounted(async () => {
+            const data = store.getters.getSelectedItems;
+            documentName.value = data?.DOCUMENT_NAME;
+
+            await store.dispatch('getHTMLDOC');
+            htmlPreview.value = store.state.htmlPreview;
+        });
+        const createIframeSource = (content: string) => {
+            return URL.createObjectURL(new Blob([content], { type: 'text/html' }));
+        };
+
+
+        const handleBlur = async () => {
+            store.commit('addSelectedItem', {
+                OBJECT_NAME: objectName.value,
+            });
+            await store.dispatch('getHTMLDOC');
+            htmlPreview.value = store.state.htmlPreview;
+        };
+        watch([objectName, date], async () => {
+            await store.dispatch('getHTMLDOC');
+            htmlPreview.value = store.state.htmlPreview;
+        }, { deep: true });
+
+        return {
+            date,
+            objectName,
+            documentName,
+            isNextButtonEnabled,
+            handleBlur,
+            htmlPreview,
+            iframeSource,
+            createIframeSource,
+            Pagination,
+            Navigation
+        }
+    },
+    methods: {
+        goToStep4() {
+            this.$router.push('/step4')
+        },
+        goToStep2() {
+            this.$router.push('/step2')
+        },
+    },
+
+});
+</script>
 <style>
+.swiper-horizontal {
+    width: 100%;
+}
+
 .pag-container {
     display: flex;
     justify-content: flex-end;
@@ -248,95 +347,3 @@ iframe {
 
 }
 </style>
-
-<script lang="ts">
-import { defineComponent, ref, computed, onMounted, watch, onBeforeUnmount } from 'vue'
-import Button from 'primevue/button';
-import InputText from 'primevue/inputtext';
-import FloatLabel from "primevue/floatlabel";
-import DatePicker from 'primevue/datepicker';
-import 'primeicons/primeicons.css'
-import Knob from 'primevue/knob';
-import { useStore } from 'vuex';
-import { Swiper, SwiperSlide } from 'swiper/vue';
-import 'swiper/swiper-bundle.css';
-import { Navigation, Pagination } from 'swiper/modules';
-
-
-
-
-export default defineComponent({
-    name: 'Step3',
-    components: {
-        Button,
-        InputText,
-        FloatLabel,
-        DatePicker,
-        Knob,
-        Swiper,
-        SwiperSlide
-    },
-    setup() {
-        const date = ref();
-        const objectName = ref('');
-        const documentName = ref('');
-        const store = useStore();
-        const htmlPreview = ref('');
-
-        const isNextButtonEnabled = computed(() => {
-            return objectName.value !== '' && documentName.value !== '' && date.value !== null;
-        });
-        const iframeSource = computed(() => {
-            return URL.createObjectURL(new Blob([htmlPreview.value], { type: 'text/html' }));
-        });
-        onBeforeUnmount(() => {
-            URL.revokeObjectURL(iframeSource.value);
-        });
-        onMounted(async () => {
-            const data = store.getters.getSelectedItems;
-            documentName.value = data?.DOCUMENT_NAME;
-
-            await store.dispatch('getHTMLDOC');
-            htmlPreview.value = store.state.htmlPreview;
-        });
-        const createIframeSource = (content: string) => {
-            return URL.createObjectURL(new Blob([content], { type: 'text/html' }));
-        };
-
-
-        const handleBlur = async () => {
-            store.commit('addSelectedItem', {
-                OBJECT_NAME: objectName.value,
-            });
-            await store.dispatch('getHTMLDOC');
-            htmlPreview.value = store.state.htmlPreview;
-        };
-        watch([objectName, date], async () => {
-            await store.dispatch('getHTMLDOC');
-            htmlPreview.value = store.state.htmlPreview;
-        }, { deep: true });
-
-        return {
-            date,
-            objectName,
-            documentName,
-            isNextButtonEnabled,
-            handleBlur,
-            htmlPreview,
-            iframeSource,
-            createIframeSource,
-            Pagination,
-            Navigation
-        }
-    },
-    methods: {
-        goToStep4() {
-            this.$router.push('/step4')
-        },
-        goToStep2() {
-            this.$router.push('/step2')
-        },
-    },
-
-});
-</script>

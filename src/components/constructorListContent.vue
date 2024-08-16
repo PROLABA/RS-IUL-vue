@@ -14,7 +14,8 @@
 
             <div class="content">
                 <div class="conten-body" v-for="(item, index) in formattedItems" :key="item.id">
-                    <div class="content-item">
+                    <div class="content-item"
+                        :class="{ 'selected-item': item.id === store.state.selectedItems.DOCUMENT_TYPE_ID }">
                         <div class="outline">
                             <Image preview alt="iul">
                                 <template #previewicon>
@@ -56,7 +57,6 @@ export default defineComponent({
         const store = useStore();
         const data = store.state.data;
         const loading = computed(() => !store.getters.getData);
-
         onMounted(async () => {
             await store.dispatch('fetchData');
             const data = store.getters.getData;
@@ -66,7 +66,7 @@ export default defineComponent({
         return {
             store,
             stepData,
-             loading
+            loading
         }
     },
     computed: {
@@ -89,6 +89,10 @@ export default defineComponent({
 })
 </script>
 <style>
+.selected-item {
+    border: 2px solid green !important
+}
+
 .container-spinner {
     display: flex;
     justify-content: center;

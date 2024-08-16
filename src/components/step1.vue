@@ -12,13 +12,14 @@
                         optionLabel="name" placeholder="Выберите тип" class="type-document"
                         @change="onFirstDropdownChange" />
                 </div>
-                <div v-if="showAdditionalDropdowns" class="select-labels">
+                <div v-if="showAdditionalDropdowns || sectionDataSelected" class="select-labels">
                     <p>2. Название раздела</p>
                     <Select style="width: 100%;" filter :loading="isLoading" v-model="selectedSection"
-                        :options="filteredSections" optionLabel="name" placeholder="Выберите название раздела"
+                        :options="filteredSections" optionLabel="name"
+                        :placeholder="sectionDataSelected ? sectionDataSelected : ' Выберите название раздела'"
                         class="type-document" />
                 </div>
-                <div v-if="showAdditionalDropdowns" class="select-labels">
+                <div v-if="showAdditionalDropdowns || sectionDataSelected" class="select-labels">
                     <p>3. Если выше не нашли нужного варианта</p>
                     <InputText class="customSelect" v-model="selectedCustom" placeholder="Ваш вариант" />
 
@@ -50,13 +51,15 @@ export default defineComponent({
     },
     setup() {
         const selectedType = ref(null);
-        const selectedSection = ref(null);
         const selectedCustom = ref(null);
         const showAdditionalDropdowns = ref(false);
         const store = useStore();
         const router = useRouter();
         const stepData = ref({});
         const types = ref([]);
+
+        const sectionDataSelected = store.state.selectedItems.DOCUMENT_NAME
+        const selectedSection = ref(null);
 
         const filteredSections = computed(() => {
             if (!selectedType.value || !stepData.value) return [];
@@ -103,7 +106,7 @@ export default defineComponent({
                 store.commit('addSelectedItem', {
                     DOCUMENT_NAME: selectedSection.value.name
                 });
-            }else if (selectedCustom.value) {
+            } else if (selectedCustom.value) {
                 store.commit('addSelectedItem', {
                     DOCUMENT_NAME: selectedCustom.value
                 });
@@ -130,7 +133,9 @@ export default defineComponent({
             goToStep2,
             goToStep1,
             isLoading,
-            stepData
+            stepData,
+            sectionDataSelected
+
         };
     }
 });

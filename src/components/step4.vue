@@ -22,6 +22,10 @@
                             <Select style="width: 100%;" v-model="role.action" :options="actionOption"
                                 optionLabel="name" placeholder="Выберите соответствующее действие" />
 
+                            <InputText style="margin-top: 10px;" v-if="role.action.name === 'Свой вариант'"
+                                v-model="role.otherAction" placeholder="Укажите соответствующее действие"
+                                className="component-input" />
+
                         </div>
                         <div className="select-labels">
                             <p>2. Фамилия</p>
@@ -30,7 +34,7 @@
                         </div>
                         <div className="select-labels">
                             <p>3. Дата</p>
-                            <DatePicker dateFormat="dd/mm/yy" showIcon fluid iconDisplay="input" style="width: 100%;"
+                            <DatePicker dateFormat="dd.mm.yy" showIcon fluid iconDisplay="input" style="width: 100%;"
                                 placeholder="Выберите или введите дату" v-model="role.date">
                                 <template #inputicon="slotProps">
                                     <i class="pi pi-angle-down" @click="slotProps.clickCallback" />
@@ -262,7 +266,6 @@ export default defineComponent({
         const surname = ref('');
         const store = useStore()
         const actionOption = ref<{ name: string, value: string }[]>([]);
-
         onMounted(async () => {
             try {
                 await store.dispatch('fetchData');
@@ -272,6 +275,15 @@ export default defineComponent({
                     name: value,
                     value: key
                 }));
+                const storedRoles = store.state.selectedItems.roles;
+                if (storedRoles && storedRoles.length > 0) {
+                    this.roles = storedRoles.map(role => ({
+                        action: { name: role.ACTION, value: '' }, // Populate action based on stored value
+                        otherAction: role.ACTION === 'Свой вариант' ? role.ACTION : '', // Handle custom action case
+                        surname: role.SECOND_NAME,
+                        date: new Date(role.ROLE_DATE) // Assuming your date is stored in a compatible format
+                    }));
+                }
             } catch (error) {
                 console.error('Ошибка при загрузке данных:', error);
             }
@@ -291,6 +303,7 @@ export default defineComponent({
             roles: [
                 {
                     action: "",
+                    otherAction: "", // New field for the "Other" option input
                     surname: "",
                     date: null
                 }
@@ -306,6 +319,7 @@ export default defineComponent({
         }
     },
     watch: {
+
         roles: {
             deep: true,
             handler() {
@@ -328,11 +342,10 @@ export default defineComponent({
             if (this.isNextButtonEnabled) {
                 const formattedRoles = this.roles.map(role => ({
                     ROLE_DATE: formatDateDDMMYY(role.date),
-                    ACTION: role.action.name,
+                    ACTION: role.action.name === 'Свой вариант' ? role.otherAction : role.action.name, // Use otherAction if 'other' is selected
                     SECOND_NAME: role.surname
                 }));
 
-                // Обновите хранилище только если данные изменились
                 const currentRoles = this.$store.state.roles || [];
                 const hasChanges = !this.areRolesEqual(formattedRoles, currentRoles);
 
