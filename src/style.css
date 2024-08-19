@@ -1,6 +1,7 @@
 :root {
   color-scheme: light !important;
 }
+
 .p-select-label,
 .p-inputtext,
 .p-select-header,
@@ -8,6 +9,10 @@
 .p-select {
   background-color: white !important;
   color: black !important;
+}
+
+.p-select-label {
+  border-radius: 4px;
 }
 
 .p-focus {

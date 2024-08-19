@@ -13,6 +13,13 @@ export default createStore({
     setData(state, data) {
       state.data = data;
     },
+    removeFile(state, fileName) {
+      if (state.selectedItems.files) {
+        state.selectedItems.files = state.selectedItems.files.filter(
+          file => file.FILE_NAME !== fileName
+        );
+      }
+    },
     addSelectedItem(state, item) {
       let updatedItems = { ...state.selectedItems };
 
@@ -83,6 +90,9 @@ export default createStore({
     },
   },
   actions: {
+    removeFileFromStore({ commit }, fileName) {
+      commit('removeFile', fileName);
+    },
     async fetchData({ commit }) {
       try {
         const response = await axios.get(

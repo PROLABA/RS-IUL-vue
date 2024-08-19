@@ -9,8 +9,9 @@
                 <div class="select-labels">
                     <p>1. Тип документации</p>
                     <Select style="width: 100%;" :loading="isLoading" v-model="selectedType" :options="types"
-                        optionLabel="name" placeholder="Выберите тип" class="type-document"
-                        @change="onFirstDropdownChange" />
+                        optionLabel="name" :placeholder="documentTypeSelected ? documentTypeSelected : 'Выберите тип'"
+                        class="
+                        type-document" @change="onFirstDropdownChange" />
                 </div>
                 <div v-if="showAdditionalDropdowns || sectionDataSelected" class="select-labels">
                     <p>2. Название раздела</p>
@@ -19,12 +20,13 @@
                         :placeholder="sectionDataSelected ? sectionDataSelected : ' Выберите название раздела'"
                         class="type-document" />
                 </div>
-                <div v-if="showAdditionalDropdowns || sectionDataSelected" class="select-labels">
+                <div v-if="showAdditionalDropdowns || sectionDataSelected || sectionDataSelected" class="select-labels">
                     <p>3. Если выше не нашли нужного варианта</p>
                     <InputText class="customSelect" v-model="selectedCustom" placeholder="Ваш вариант" />
 
                 </div>
-                <div class="flex-just-spcbtw" v-if="showAdditionalDropdowns">
+                <div class="flex-just-spcbtw"
+                    v-if="showAdditionalDropdowns || sectionDataSelected || sectionDataSelected">
                     <Button label="Назад" class="prev" @click="goToStep1" icon="pi pi-arrow-left" text />
                     <Button class="next" @click="goToStep2" label="Следующий шаг" />
                 </div>
@@ -59,6 +61,7 @@ export default defineComponent({
         const types = ref([]);
 
         const sectionDataSelected = store.state.selectedItems.DOCUMENT_NAME
+        const documentTypeSelected = store.state.selectedItems.DOCUMENT_TYPE_PREW
         const selectedSection = ref(null);
 
         const filteredSections = computed(() => {
@@ -104,11 +107,14 @@ export default defineComponent({
             //  store.commit('clearSelectedItems');
             if (selectedSection.value) {
                 store.commit('addSelectedItem', {
-                    DOCUMENT_NAME: selectedSection.value.name
+                    DOCUMENT_NAME: selectedSection.value.name,
+                    DOCUMENT_TYPE_PREW: selectedType.value.name
                 });
             } else if (selectedCustom.value) {
                 store.commit('addSelectedItem', {
-                    DOCUMENT_NAME: selectedCustom.value
+                    DOCUMENT_NAME: selectedCustom.value,
+                    DOCUMENT_TYPE_PREW: selectedType.value.name
+
                 });
             }
         };
@@ -134,7 +140,8 @@ export default defineComponent({
             goToStep1,
             isLoading,
             stepData,
-            sectionDataSelected
+            sectionDataSelected,
+            documentTypeSelected
 
         };
     }
