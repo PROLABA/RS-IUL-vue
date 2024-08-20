@@ -29,6 +29,11 @@
                             </template>
                         </DatePicker>
                     </div>
+                    <div v-if="selectedTemplateId === flagId" className="select-labels">
+                        <p>4. Обозначение документа</p>
+                        <InputText id="name-doc" placeholder="Введите Обозначение документа"
+                            className="component-input" />
+                    </div>
                     <div class="btn-footer" style="padding-top:20px;">
                         <div className="flex-just-spcbtw">
                             <Button label="Назад" @click="goToStep2" className="prev" icon="pi pi-arrow-left" text />
@@ -71,19 +76,12 @@
                                         fill='#333333' />
                                 </svg></button>
 
-                            <Swiper :modules="[Navigation, Pagination]" :navigation="{
+                            <Swiper ref="swiperRef  " :modules="[Navigation, Pagination]" :navigation="{
                                 nextEl: '.swiper-button-next2, .additional-next',
                                 prevEl: '.swiper-button-prev2, .additional-prev'
                             }" :pagination="{
                                 el: '.swiper-pagination-custom',
-                                type: 'custom',
-                                renderCustom: function (swiper, current, total) {
-                                    return `
-                <div class='custom-pagination'>              
-                    <span>${current} из ${total}</span>
-                </div>
-            `;
-                                }
+                                type: 'fraction',
                             }">
                                 <SwiperSlide v-for="(content, index) in htmlPreview" :key="index">
                                     <div class="document-item">
@@ -111,7 +109,7 @@
 
 
 <script lang="ts">
-import { defineComponent, ref, computed, onMounted, watch, onBeforeUnmount } from 'vue'
+import { defineComponent, ref, computed, onMounted, watch, onBeforeUnmount, nextTick } from 'vue'
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import FloatLabel from "primevue/floatlabel";
@@ -141,10 +139,20 @@ export default defineComponent({
         const date = ref();
         const store = useStore();
 
-        const fileDataSelected = store.state.selectedItems.OBJECT_NAME
+        const fileDataSelected = store.state.selectedItems.OBJECT_NAME;
+        const selectedTemplateId = store.state.selectedItems.DOCUMENT_TYPE_ID;
+        const flagId = store.state.flagId;
         const objectName = ref('' || fileDataSelected);
         const documentName = ref('');
         const htmlPreview = ref('');
+        const swiperRef = ref(null);
+
+        const updateSwiper = () => {
+            if (swiperRef.value && swiperRef.value.swiper) {
+                swiperRef.value.swiper.update();
+                swiperRef.value.swiper.slideTo(swiperRef.value.swiper.activeIndex); // Попробуйте добавить эту строку
+            }
+        };
 
         const isNextButtonEnabled = computed(() => {
             return objectName.value !== '' && documentName.value !== '' && date.value !== null;
@@ -161,6 +169,9 @@ export default defineComponent({
 
             await store.dispatch('getHTMLDOC');
             htmlPreview.value = store.state.htmlPreview;
+            await nextTick(); // Убедитесь, что DOM обновлен
+            updateSwiper();
+
         });
         const createIframeSource = (content: string) => {
             return URL.createObjectURL(new Blob([content], { type: 'text/html' }));
@@ -177,6 +188,9 @@ export default defineComponent({
         watch([objectName, date], async () => {
             await store.dispatch('getHTMLDOC');
             htmlPreview.value = store.state.htmlPreview;
+            await nextTick(); // Убедитесь, что DOM обновлен
+            updateSwiper();
+
         }, { deep: true });
 
         return {
@@ -189,7 +203,10 @@ export default defineComponent({
             iframeSource,
             createIframeSource,
             Pagination,
-            Navigation
+            Navigation,
+            swiperRef,
+            selectedTemplateId,
+            flagId,
         }
     },
     methods: {
@@ -334,7 +351,7 @@ export default defineComponent({
 
 iframe {
     width: 100%;
-    height: 500px;
+    height: 597px;
 
 }
 

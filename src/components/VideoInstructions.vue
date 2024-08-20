@@ -7,9 +7,9 @@
                 </div>
             </template>
             <p>
-                <video width="100%" controls autoplay>
-                    <source src="https://www.youtube.com/watch?v=QcGJcaG2OtA" />
-                </video>
+                
+                <iframe width="100%" height="315" :src="videoLink" frameborder="0" allow="autoplay; encrypted-media"
+                    allowfullscreen></iframe>
             </p>
         </Dialog>
     </div>
@@ -42,6 +42,12 @@ export default defineComponent({
     name: 'VideoInstructions',
     components: {
         Dialog,
+    },
+    props: {
+        videoLink: {
+            type: String,
+            required: true
+        }
     },
     setup() {
         const visible = ref(false);

@@ -20,15 +20,18 @@
                 <div class="btn-container">
                     <Button style="cursor: pointer;" label="Редактировать" className="edit-btn"
                         @click="goToEditStepOne" />
-                    <Button style="cursor: pointer;" label="Оформить новый ИУЛ" className="create-new-iul" @click="goToStep1" />
+                    <Button style="cursor: pointer;" label="Оформить новый ИУЛ" className="create-new-iul"
+                        @click="goToStep1" />
                 </div>
-                <div class="acsess-sub-title">Вы можете скачать ИУЛ повторно или отредактировать в «Моих документах».
+                <div class="acsess-sub-title">Вы можете скачать ИУЛ повторно или отредактировать <br /> в «Моих
+                    документах».
                 </div>
                 <div class="acsess-link"><a href="#">Мои документы</a></div>
             </div>
         </div>
     </div>
 </template>
+
 <style>
 .icon {
     display: flex;
@@ -54,6 +57,10 @@
     background-color: #E9E9E9;
 }
 
+.acsess-link {
+    padding-top: 15px;
+}
+
 .acsess-description {
     padding-top: 30px;
 
@@ -70,8 +77,7 @@
     padding: 30px 0px;
     max-width: 495px;
     display: flex;
-    justify-content: space-between;
-
+    gap: 20px;
 }
 
 .edit-btn {
@@ -81,7 +87,7 @@
     border: 1px solid #99CCFF !important;
     border-radius: 4px;
     font-size: 16px;
-    font-weight: 700;
+    font-weight: 700 !important;
     line-height: 1.7;
 }
 
@@ -92,8 +98,16 @@
     border: 1px solid #99CCFF !important;
     border-radius: 4px;
     font-size: 16px;
-    font-weight: 700;
+    font-weight: 700 !important;
     line-height: 1.7;
+}
+
+.edit-btn .p-button-label {
+    font-weight: 700 !important;
+}
+
+.create-new-iul .p-button-label {
+    font-weight: 700 !important;
 }
 
 .acsess-sub-title {

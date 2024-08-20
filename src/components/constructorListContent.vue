@@ -22,11 +22,12 @@
                                     <img src="/src/assets/img/magnifier.png" />
                                 </template>
                                 <template #image>
-                                    <img class="iul-imges" :src="item.img" alt="image" />
+                                    <img class="iul-imges" :src="`https://devserv.rsexpertiza.ru${item.img}`"
+                                        alt="img" />
                                 </template>
                                 <template #preview="slotProps">
-                                    <img :src="item.img" alt="preview" :style="slotProps.style"
-                                        @click="slotProps.onClick" />
+                                    <img :src="`https://devserv.rsexpertiza.ru${item.img}`" alt="preview"
+                                        :style="slotProps.style" @click="slotProps.onClick" />
                                 </template>
                             </Image>
                         </div>
@@ -69,16 +70,22 @@ export default defineComponent({
             loading
         }
     },
+
     computed: {
         formattedItems() {
             if (this.stepData && this.stepData.elements && this.stepData.elements["48276"]) {
-                return Object.values(this.stepData.elements["48276"].list);
+                return Object.values(this.stepData.elements["48276"]);
             }
             return [];
         }
     },
+
     methods: {
         selectItem(item) {
+            const totalItems = this.formattedItems.length;
+            if (totalItems >= 2 && item.id === this.formattedItems[1].id) {
+                this.store.commit('setFlagId', item.id);
+            }
             this.store.commit('addSelectedItem', { DOCUMENT_TYPE_ID: item.id, });
             this.goToStep1();
         },

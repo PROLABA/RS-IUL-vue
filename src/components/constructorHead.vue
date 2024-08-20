@@ -2,7 +2,7 @@
     <div className="container">
         <div className="bg-head">
             <div class="text-constructor-head">
-                Конструктор <br> информационно<br>-удостоверяющего листа (ИУЛ)
+                {{ title }}
                 <div class="atention">
                     <div class="icon"><svg width="26" height="26" viewBox="0 0 26 26" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
@@ -15,7 +15,7 @@
                         </svg>
                     </div>
                     <a href="#" @click.prevent="openVideoInstructions">Смотреть видео иснструкцию</a>
-                    <VideoInstructions ref="videoInstructionsRef"></VideoInstructions>
+                    <VideoInstructions ref="videoInstructionsRef" :videoLink="vidoLink"></VideoInstructions>
                 </div>
             </div>
             <div class="white-bg-text">
@@ -40,21 +40,16 @@
                     </svg>
                 </div>
                 <div class="form-iula">
-                    <div class=" fs-12">Формы ИУЛа соответствует:</div>
-                    <ul>
-                        <li>рекомендованой форме Главгосэкспертизы;</li>
-                        <li>ГОСТу Р 21.101-2020;</li>
-                        <li>приложению В ГОСТа 2.051-2013.</li>
-                    </ul>
+                    <div class=" fs-12" v-html="subtitle"></div>
                 </div>
             </div>
         </div>
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, computed, watch } from 'vue'
+import { defineComponent, ref, computed, watch, onMounted } from 'vue'
 import VideoInstructions from './VideoInstructions.vue'
-
+import { useStore } from 'vuex';
 
 
 export default defineComponent({
@@ -63,6 +58,24 @@ export default defineComponent({
         VideoInstructions,
     },
     setup() {
+        const store = useStore();
+        const info = ref(null);
+        const title = ref(null);
+        const subtitle = ref(null);
+        const vidoLink = ref(null);
+        const fetchHeadInfo = async () => {
+            try {
+                await store.dispatch('getHeaderInfo');
+                const data = store.getters.getHeaderInfo;
+                title.value = data[0].title;
+                subtitle.value = data[0].subtitle.TEXT;
+                vidoLink.value = data[0].video;
+            } catch (error) {
+                console.error("Error fetching FAQ questions:", error);
+            }
+        };
+
+        onMounted(fetchHeadInfo);
         const videoInstructionsRef = ref<InstanceType<typeof VideoInstructions> | null>(null);
         const openVideoInstructions = () => {
             videoInstructionsRef.value?.show();
@@ -70,6 +83,10 @@ export default defineComponent({
         return {
             videoInstructionsRef,
             openVideoInstructions,
+            info,
+            title,
+            subtitle,
+            vidoLink
         };
     }
 })
@@ -136,7 +153,7 @@ body {
 
 .fs-12 {
     font-size: 12px;
-    font-weight: 500;
+    font-weight: 600;
     line-height: 14.06px;
     text-align: left;
 }
@@ -149,11 +166,17 @@ ul {
 
 }
 
+.form-iula ul li {
+    line-height: 14.4px;
+
+}
+
 .form-iula ul li:before {
     content: "—";
     position: relative;
     left: 2px;
     padding-right: 11px;
+
 
 }
 </style>

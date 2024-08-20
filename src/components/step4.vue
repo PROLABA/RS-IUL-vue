@@ -9,7 +9,7 @@
             </div>
             <div class="step4-container">
                 <div class="left">
-                    <div v-for="(role, index) in roles" :key="index" class="dotted-continer">
+                    <div v-for="(role, index) in roles" :key="index" class="dotted-continer to-padding">
                         <div class="dflex-just-btwm">
                             <p className="role">Роль {{ index + 1 }}</p>
                             <div class="delete-btn" @click="deleteRole(index)">
@@ -17,22 +17,23 @@
                                     v-if="roles.length > 1 && index !== 0"></i>
                             </div>
                         </div>
-                        <div className="select-labels">
+                        <div className="select-labels bold-p">
                             <p>1. Действие</p>
                             <Select style="width: 100%;" v-model="role.action" :options="actionOption"
-                                optionLabel="name" placeholder="Выберите соответствующее действие" />
+                                optionLabel="name"
+                                :placeholder="role.action.name ? role.action.name : 'Выберите соответствующее действие'" />
 
                             <InputText style="margin-top: 10px;" v-if="role.action.name === 'Свой вариант'"
                                 v-model="role.otherAction" placeholder="Укажите соответствующее действие"
                                 className="component-input" />
 
                         </div>
-                        <div className="select-labels">
+                        <div className="select-labels bold-p">
                             <p>2. Фамилия</p>
                             <InputText v-model="role.surname" id="name-doc" placeholder="Введите наименование документа"
                                 className="component-input" />
                         </div>
-                        <div className="select-labels">
+                        <div className="select-labels bold-p">
                             <p>3. Дата</p>
                             <DatePicker dateFormat="dd.mm.yy" showIcon fluid iconDisplay="input" style="width: 100%;"
                                 placeholder="Выберите или введите дату" v-model="role.date">
@@ -98,15 +99,8 @@
                                 prevEl: '.swiper-button-prev2, .additional-prev'
                             }" :pagination="{
                                 el: '.swiper-pagination-custom',
-                                type: 'custom',
-                                renderCustom: function (swiper, current, total) {
-                                    return `
-                <div class='custom-pagination'>              
-                    <span>${current} из ${total}</span>
-                </div>
-            `;
-                                }
-                            }">
+                                type: 'fraction',
+                            }">>
                                 <SwiperSlide v-for="(preview, index) in htmlPreview" :key="index">
                                     <iframe width="471px" height="597px" :srcdoc="preview"></iframe>
                                 </SwiperSlide>
@@ -128,12 +122,156 @@
     </div>
 </template>
 
+
+
+<script lang="ts">
+import { defineComponent, ref, computed, watch, onMounted } from 'vue'
+import Button from 'primevue/button';
+import InputText from 'primevue/inputtext';
+import FloatLabel from "primevue/floatlabel";
+import DatePicker from 'primevue/datepicker';
+import 'primeicons/primeicons.css'
+import Select from 'primevue/select';
+import Knob from 'primevue/knob';
+import { formatDateDDMMYY } from "../helpers/formatedData"
+import { useStore } from 'vuex';
+import { Swiper, SwiperSlide } from 'swiper/vue';
+import 'swiper/swiper-bundle.css';
+import { Navigation, Pagination } from 'swiper/modules';
+import { useRouter } from 'vue-router';
+
+export default defineComponent({
+    name: 'Step4',
+    components: {
+        Button,
+        InputText,
+        FloatLabel,
+        DatePicker,
+        Knob,
+        Select,
+        Swiper,
+        SwiperSlide
+    },
+
+    setup() {
+        const store = useStore();
+        const router = useRouter();
+        const actionOption = ref<{ name: string, value: string }[]>([]);
+        const roles = ref([]);
+        console.log(roles)
+        const isNextButtonEnabled = computed(() => {
+            return roles.value.every(role => role.action !== '' && role.surname !== '' && role.date !== null);
+        });
+
+        const htmlPreview = computed(() => {
+            return store.state.htmlPreview;
+        });
+        const goToStep5 = () => {
+            router.push('/step5');
+        };
+
+        const goToStep3 = () => {
+            router.push('/step3');
+        };
+
+        onMounted(async () => {
+            try {
+                await store.dispatch('fetchData');
+                const data = store.getters.getData;
+                const stepData = data.step_5.elements["48270"].list;
+                actionOption.value = Object.entries(stepData).map(([key, value]) => ({
+                    name: value,
+                    value: key
+                }));
+                updateRolesFromStore();
+            } catch (error) {
+                console.error('Ошибка при загрузке данных:', error);
+            }
+        });
+
+        const updateRolesFromStore = () => {
+            const storedRoles = store.state.selectedItems.roles;
+            if (storedRoles && storedRoles.length > 0) {
+                roles.value = storedRoles.map(role => ({
+                    action: { name: role.ACTION, value: '' },
+                    otherAction: role.ACTION === 'Свой вариант' ? role.ACTION : '',
+                    surname: role.SECOND_NAME,
+                    date: new Date(role.ROLE_DATE)
+                }));
+            } else {
+                roles.value = [{
+                    action: "",
+                    otherAction: "",
+                    surname: "",
+                    date: null
+                }];
+            }
+        };
+
+        watch(roles, (newRoles) => {
+            if (isNextButtonEnabled.value) {
+                updateRolesInStore(newRoles);
+            }
+        }, { deep: true });
+
+        const updateRolesInStore = (newRoles) => {
+            const formattedRoles = newRoles.map(role => ({
+                ROLE_DATE: role.date,
+                ACTION: role.action.name === 'Свой вариант' ? role.otherAction : role.action.name,
+                SECOND_NAME: role.surname
+            }));
+
+            store.commit('addSelectedItem', { roles: formattedRoles });
+            store.dispatch('getHTMLDOC');
+        };
+
+        return {
+            actionOption,
+            roles,
+            isNextButtonEnabled,
+            htmlPreview,
+            Pagination,
+            Navigation,
+            goToStep5,
+            goToStep3,
+        };
+    },
+
+    methods: {
+        addRole() {
+            this.roles.push({
+                action: '',
+                otherAction: '',
+                surname: '',
+                date: null,
+            });
+        },
+        deleteRole(index: number) {
+            if (this.roles.length > 1 && index !== 0) {
+                this.roles.splice(index, 1);
+            }
+        },
+
+    }
+});
+</script>
 <style>
 .step4-container {
     display: grid;
     grid-template-columns: 495px 705px;
     gap: 20px;
+    padding-top: 41px;
 }
+
+.bold-p p {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 16.8px;
+    text-align: left;
+    color: #333333;
+
+}
+
 
 .dotted-continer {
     border: 2px dashed #E9E9E9;
@@ -207,7 +345,7 @@
 .role {
     color: #333333;
     font-size: 16px;
-    font-weight: 500;
+    font-weight: 600;
     line-height: 1.2px;
     text-align: left;
 
@@ -231,152 +369,3 @@
     cursor: pointer;
 }
 </style>
-
-<script lang="ts">
-import { defineComponent, ref, computed, watch, onMounted } from 'vue'
-import Button from 'primevue/button';
-import InputText from 'primevue/inputtext';
-import FloatLabel from "primevue/floatlabel";
-import DatePicker from 'primevue/datepicker';
-import 'primeicons/primeicons.css'
-import Select from 'primevue/select';
-import Knob from 'primevue/knob';
-import { formatDateDDMMYY } from "../helpers/formatedData"
-import { useStore } from 'vuex';
-import { Swiper, SwiperSlide } from 'swiper/vue';
-import 'swiper/swiper-bundle.css';
-import { Navigation, Pagination } from 'swiper/modules';
-
-export default defineComponent({
-    name: 'Step4',
-    components: {
-        Button,
-        InputText,
-        FloatLabel,
-        DatePicker,
-        Knob,
-        Select,
-        Swiper,
-        SwiperSlide
-    },
-
-    setup() {
-        const date = ref<Date | null>(null);
-        const action = ref('');
-        const surname = ref('');
-        const store = useStore()
-        const actionOption = ref<{ name: string, value: string }[]>([]);
-        onMounted(async () => {
-            try {
-                await store.dispatch('fetchData');
-                const data = store.getters.getData;
-                const stepData = data.step_5.elements["48270"].list;
-                actionOption.value = Object.entries(stepData).map(([key, value]) => ({
-                    name: value,
-                    value: key
-                }));
-                const storedRoles = store.state.selectedItems.roles;
-                if (storedRoles && storedRoles.length > 0) {
-                    this.roles = storedRoles.map(role => ({
-                        action: { name: role.ACTION, value: '' }, // Populate action based on stored value
-                        otherAction: role.ACTION === 'Свой вариант' ? role.ACTION : '', // Handle custom action case
-                        surname: role.SECOND_NAME,
-                        date: new Date(role.ROLE_DATE) // Assuming your date is stored in a compatible format
-                    }));
-                }
-            } catch (error) {
-                console.error('Ошибка при загрузке данных:', error);
-            }
-        });
-
-        return {
-            date,
-            surname,
-            action,
-            actionOption,
-            Pagination,
-            Navigation,
-        }
-    },
-    data() {
-        return {
-            roles: [
-                {
-                    action: "",
-                    otherAction: "", // New field for the "Other" option input
-                    surname: "",
-                    date: null
-                }
-            ]
-        }
-    },
-    computed: {
-        isNextButtonEnabled() {
-            return this.roles.every(role => role.action !== '' && role.surname !== '' && role.date !== null);
-        },
-        htmlPreview() {
-            return this.$store.state.htmlPreview;
-        }
-    },
-    watch: {
-
-        roles: {
-            deep: true,
-            handler() {
-                if (this.isNextButtonEnabled) {
-                    this.updateRolesInStore();
-                }
-            }
-        }
-    },
-    methods: {
-        addRole() {
-            this.roles.push({
-                action: '',
-                surname: '',
-                date: null,
-            });
-            // Переместите вызов updateRolesInStore в goToStep5 или другое подходящее место
-        },
-        updateRolesInStore() {
-            if (this.isNextButtonEnabled) {
-                const formattedRoles = this.roles.map(role => ({
-                    ROLE_DATE: formatDateDDMMYY(role.date),
-                    ACTION: role.action.name === 'Свой вариант' ? role.otherAction : role.action.name, // Use otherAction if 'other' is selected
-                    SECOND_NAME: role.surname
-                }));
-
-                const currentRoles = this.$store.state.roles || [];
-                const hasChanges = !this.areRolesEqual(formattedRoles, currentRoles);
-
-                if (hasChanges) {
-                    this.$store.commit('addSelectedItem', { roles: formattedRoles });
-                    this.$store.dispatch('getHTMLDOC');
-                }
-            }
-        },
-        deleteRole(index: number) {
-            if (this.roles.length > 1 && index !== 0) {
-                this.roles.splice(index, 1);
-                // Переместите вызов updateRolesInStore в goToStep5 или другое подходящее место
-            }
-        },
-        goToStep5() {
-            this.updateRolesInStore(); // Обновляем роли перед переходом
-            this.$router.push('/step5');
-        },
-        goToStep3() {
-            this.$router.push('/step3');
-        },
-        areRolesEqual(roles1, roles2) {
-            if (roles1.length !== roles2.length) return false;
-            return roles1.every((role, index) => (
-                role.ROLE_DATE === roles2[index].ROLE_DATE &&
-                role.ACTION === roles2[index].ACTION &&
-                role.SECOND_NAME === roles2[index].SECOND_NAME
-            ));
-        }
-    }
-
-});
-</script>

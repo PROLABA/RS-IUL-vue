@@ -8,15 +8,28 @@ export default createStore({
     selectedItems: {},
     htmlPreview: "",
     filesInfoHash: {},
+    faqQuestions: [],
+    headerInfo: [],
+    flagId: "",
   },
   mutations: {
+    setFlagId(state, id) {
+      state.flagId = id;
+      console.log(state.flagId);
+    },
     setData(state, data) {
       state.data = data;
+    },
+    setFAQQuestions(state, questions) {
+      state.faqQuestions = questions;
+    },
+    setHeaderInfo(state, info) {
+      state.headerInfo = info;
     },
     removeFile(state, fileName) {
       if (state.selectedItems.files) {
         state.selectedItems.files = state.selectedItems.files.filter(
-          file => file.FILE_NAME !== fileName
+          (file) => file.FILE_NAME !== fileName
         );
       }
     },
@@ -81,17 +94,19 @@ export default createStore({
     },
     updateFileHashes(state, { newHashes, selectedEncoding }) {
       if (state.selectedItems.files) {
-        state.selectedItems.files = state.selectedItems.files.map((file, index) => ({
-          ...file,
-          FILE_HASH: newHashes[index]?.FILE_HASH || file.FILE_HASH,
-        }));
+        state.selectedItems.files = state.selectedItems.files.map(
+          (file, index) => ({
+            ...file,
+            FILE_HASH: newHashes[index]?.FILE_HASH || file.FILE_HASH,
+          })
+        );
       }
       state.selectedItems.HASH_TYPE = selectedEncoding;
     },
   },
   actions: {
     removeFileFromStore({ commit }, fileName) {
-      commit('removeFile', fileName);
+      commit("removeFile", fileName);
     },
     async fetchData({ commit }) {
       try {
@@ -181,7 +196,7 @@ export default createStore({
           const downloadUrl = `https://devserv.rsexpertiza.ru${response.data.data}`;
 
           // Open the URL in a new window
-          window.open(downloadUrl, '_blank');
+          window.open(downloadUrl, "_blank");
         } else {
           throw new Error("Download URL not found in the response");
         }
@@ -193,22 +208,55 @@ export default createStore({
     async getVersions({ commit, state }) {
       try {
         const response = await axios.get(
-          "https://devserv.rsexpertiza.ru/api/document-constructor/versions?id=20",
+          "https://devserv.rsexpertiza.ru/api/document-constructor/versions?id=20"
         );
         const newData = JSON.parse(response.data.data["0"].json);
         console.log(newData);
         if (newData) {
-          commit('clearSelectedItems');
-          commit('addSelectedItem', newData);
+          commit("clearSelectedItems");
+          commit("addSelectedItem", newData);
         }
       } catch (error) {
         console.error("Error gettingVersionsToEdit:", error);
         throw error;
       }
-    }
+    },
+    async getFAQQuestions({ commit }) {
+      try {
+        const response = await axios.get(
+          "https://devserv.rsexpertiza.ru/api/document-constructor/questions"
+        );
+        if (response.data && response.data.data) {
+          commit("setFAQQuestions", response.data.data);
+        } else {
+          throw new Error("FAQ data not found in the response");
+        }
+      } catch (error) {
+        console.error("Error fetching FAQ questions:", error);
+        throw error;
+      }
+    },
+    async getHeaderInfo({ commit }) {
+      try {
+        const response = await axios.get(
+          "https://devserv.rsexpertiza.ru/api/document-constructor/header"
+        );
+        if (response.data) {
+          commit("setHeaderInfo", response.data.data);
+        } else {
+          throw new Error("FAQ data not found in the response");
+        }
+      } catch (error) {
+        console.error("Error fetching FAQ questions:", error);
+        throw error;
+      }
+    },
   },
+
   getters: {
     getData: (state) => state.data,
     getSelectedItems: (state) => state.selectedItems,
+    getFAQQuestions: (state) => state.faqQuestions,
+    getHeaderInfo: (state) => state.headerInfo,
   },
 });

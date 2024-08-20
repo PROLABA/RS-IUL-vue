@@ -62,14 +62,7 @@
                                 prevEl: '.swiper-button-prev2, .additional-prev'
                             }" :pagination="{
                                 el: '.swiper-pagination-custom',
-                                type: 'custom',
-                                renderCustom: function (swiper, current, total) {
-                                    return `
-                <div class='custom-pagination'>              
-                    <span>${current} из ${total}</span>
-                </div>
-            `;
-                                }
+                                type: 'fraction',
                             }">
                                 <SwiperSlide v-for="(preview, index) in htmlPreview" :key="index">
                                     <iframe width="471px" height="597px" :srcdoc="preview"></iframe>
