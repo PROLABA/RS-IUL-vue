@@ -1,15 +1,17 @@
 <template>
+    <!-- @ts-ignore -->
+
     <div class="container">
         <div class="white-bg">
             <div class="content-title">
                 <p>Внесите данные роли </p>
                 <img src="/src/assets/img/result4.png" alt="" srcset="">
-                <!-- <Knob v-model="value" disabled /> -->
 
             </div>
             <div class="step4-container">
                 <div class="left">
                     <div v-for="(role, index) in roles" :key="index" class="dotted-continer to-padding">
+                        <!-- @ts-ignore -->
                         <div class="dflex-just-btwm">
                             <p className="role">Роль {{ index + 1 }}</p>
                             <div class="delete-btn" @click="deleteRole(index)">
@@ -19,10 +21,11 @@
                         </div>
                         <div className="select-labels bold-p">
                             <p>1. Действие</p>
+                            <!-- @ts-ignore -->
                             <Select style="width: 100%;" v-model="role.action" :options="actionOption"
                                 optionLabel="name"
                                 :placeholder="role.action.name ? role.action.name : 'Выберите соответствующее действие'" />
-
+                            <!-- @ts-ignore -->
                             <InputText style="margin-top: 10px;" v-if="role.action.name === 'Свой вариант'"
                                 v-model="role.otherAction" placeholder="Укажите соответствующее действие"
                                 className="component-input" />
@@ -30,11 +33,13 @@
                         </div>
                         <div className="select-labels bold-p">
                             <p>2. Фамилия</p>
+                            <!-- @ts-ignore -->
                             <InputText v-model="role.surname" id="name-doc" placeholder="Введите наименование документа"
                                 className="component-input" />
                         </div>
                         <div className="select-labels bold-p">
                             <p>3. Дата</p>
+                            <!-- @ts-ignore -->
                             <DatePicker dateFormat="dd.mm.yy" showIcon fluid iconDisplay="input" style="width: 100%;"
                                 placeholder="Выберите или введите дату" v-model="role.date">
                                 <template #inputicon="slotProps">
@@ -133,7 +138,6 @@ import DatePicker from 'primevue/datepicker';
 import 'primeicons/primeicons.css'
 import Select from 'primevue/select';
 import Knob from 'primevue/knob';
-import { formatDateDDMMYY } from "../helpers/formatedData"
 import { useStore } from 'vuex';
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import 'swiper/swiper-bundle.css';
@@ -154,17 +158,27 @@ export default defineComponent({
     },
 
     setup() {
+        // @ts-ignore
         const store = useStore();
         const router = useRouter();
         const actionOption = ref<{ name: string, value: string }[]>([]);
-        const roles = ref([]);
-        console.log(roles)
+        // @ts-ignore
+        const roles = ref<Array<{
+            action: { name: string; value: string };
+            otherAction: string;
+            surname: string;
+            date: string | null;
+        }>>([]);
         const isNextButtonEnabled = computed(() => {
-            return roles.value.every(role => role.action !== '' && role.surname !== '' && role.date !== null);
+            return roles.value.every(role =>
+                role.action.name !== '' &&
+                role.surname !== '' &&
+                role.date !== null
+            );
         });
-
+        // @ts-ignore
         const htmlPreview = computed(() => {
-            return store.state.htmlPreview;
+            return store.state.htmlPreview as string;
         });
         const goToStep5 = () => {
             router.push('/step5');
@@ -179,6 +193,7 @@ export default defineComponent({
                 await store.dispatch('fetchData');
                 const data = store.getters.getData;
                 const stepData = data.step_5.elements["48270"].list;
+                // @ts-ignore
                 actionOption.value = Object.entries(stepData).map(([key, value]) => ({
                     name: value,
                     value: key
@@ -192,15 +207,17 @@ export default defineComponent({
         const updateRolesFromStore = () => {
             const storedRoles = store.state.selectedItems.roles;
             if (storedRoles && storedRoles.length > 0) {
+                // @ts-ignore
                 roles.value = storedRoles.map(role => ({
                     action: { name: role.ACTION, value: '' },
                     otherAction: role.ACTION === 'Свой вариант' ? role.ACTION : '',
                     surname: role.SECOND_NAME,
-                    date: new Date(role.ROLE_DATE)
+                    date: role.ROLE_DATE
                 }));
             } else {
+                // @ts-ignore
                 roles.value = [{
-                    action: "",
+                    action: { name: '', value: '' },
                     otherAction: "",
                     surname: "",
                     date: null
@@ -213,8 +230,9 @@ export default defineComponent({
                 updateRolesInStore(newRoles);
             }
         }, { deep: true });
-
+        // @ts-ignore
         const updateRolesInStore = (newRoles) => {
+            // @ts-ignore
             const formattedRoles = newRoles.map(role => ({
                 ROLE_DATE: role.date,
                 ACTION: role.action.name === 'Свой вариант' ? role.otherAction : role.action.name,
@@ -240,7 +258,7 @@ export default defineComponent({
     methods: {
         addRole() {
             this.roles.push({
-                action: '',
+                action: { name: '', value: '' },
                 otherAction: '',
                 surname: '',
                 date: null,

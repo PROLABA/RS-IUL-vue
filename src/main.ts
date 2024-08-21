@@ -4,10 +4,9 @@ import Aura from '@primevue/themes/aura';
 import App from './App.vue'
 import 'primeicons/primeicons.css';
 import { ru } from './helper/local';
-import router from './router';
-import store from './store/store';
+import router from './router.ts';
 import ToastService from 'primevue/toastservice';
-
+import store from './store/store.ts';
 const app = createApp(App);
 app.use(PrimeVue, {
     locale: ru,

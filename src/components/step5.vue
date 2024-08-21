@@ -187,7 +187,6 @@ import { useStore } from "vuex";
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import 'swiper/swiper-bundle.css';
 import { Navigation, Pagination } from 'swiper/modules';
-import { isEqual } from 'lodash';
 
 export default defineComponent({
     name: 'Step5',
@@ -196,10 +195,11 @@ export default defineComponent({
         Select,
         Swiper,
         SwiperSlide
+
     },
 
     setup() {
-        const selectedEncoding = ref<{ name: string, value: string } | null>(null);
+        const selectedEncoding = ref<{ name: string, value: string }[]>([]);
         const encoding = ref<{ name: string, value: string }[]>([]);
         const store = useStore();
         const filesInfoHash = computed(() => store.state.filesInfoHash);
@@ -217,7 +217,7 @@ export default defineComponent({
                 const data = store.getters.getData;
                 const stepData = data.step_6.elements[48274].list;
                 encoding.value = Object.entries(stepData).map(([key, value]) => ({
-                    name: value,
+                    name: value as string,
                     value: key
                 }));
                 await fetchHtmlPreview();
@@ -226,12 +226,15 @@ export default defineComponent({
                 await fetchHtmlPreview();
             }
         });
+        // @ts-ignore
         let previousData = null;
 
         watch(selectedEncoding, async (newValue) => {
+            // @ts-ignore
             if (newValue && newValue.name) {
+                // @ts-ignore
                 const selectedEncoding = newValue.name || "MD5";
-
+                // @ts-ignore
                 const newHashes = filesInfoHash.value.FILE_HASH.map((fileHash) => ({
                     FILE_HASH: fileHash[selectedEncoding],
                 }));
@@ -249,7 +252,8 @@ export default defineComponent({
         };
     },
     computed: {
-        htmlPreview() {
+        htmlPreview(): string[] {
+            // @ts-ignore
             return this.$store.state.htmlPreview;
         }
     },

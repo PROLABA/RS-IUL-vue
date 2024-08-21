@@ -1,4 +1,4 @@
-export function formatDate(dateString) {
+export function formatDate(dateString: string | number | Date) {
     const date = new Date(dateString);
     const day = date.getDate().toString().padStart(2, '0');
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -8,7 +8,7 @@ export function formatDate(dateString) {
 
     return `${day}.${month}.${year} ${hours}:${minutes}`;
 }
-export function formatDateDDMMYY(date) {
+export function formatDateDDMMYY(date: Date | null): string {
     if (!date) return '';
     const day = date.getDate().toString().padStart(2, '0');
     const month = (date.getMonth() + 1).toString().padStart(2, '0');

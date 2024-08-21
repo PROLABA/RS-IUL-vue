@@ -14,8 +14,8 @@
   </Dialog>
 </template>
 
-<script setup>
-import { defineComponent, watch, ref, computed, onMounted } from 'vue'
+<script setup lang="ts">
+import { ref, onMounted, Ref } from 'vue'
 import ConstructorHead from './components/constructorHead.vue'
 import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
@@ -23,10 +23,14 @@ import Accordion from 'primevue/accordion'
 import AccordionTab from 'primevue/accordiontab'
 import { useStore } from 'vuex';
 
+interface Question {
+  title: string;
+  text: string;
+}
 const displayFAQModal = ref(false)
 const store = useStore();
 
-const questions = ref([]);
+const questions: Ref<Question[]> = ref([]);
 
 const fetchQuestions = async () => {
   try {

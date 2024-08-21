@@ -1,10 +1,20 @@
-import { createStore } from "vuex";
+import { createStore, ActionContext } from "vuex";
 import axios from "axios";
 import { formatDate } from "../helpers/formatedData";
 
+interface State {
+  data: any
+  selectedItems: any
+  htmlPreview: string
+  filesInfoHash: Record<string, any>
+  faqQuestions: any[]
+  headerInfo: any[]
+  flagId: string
+}
 
-// windlow.versionid;
-export default createStore({
+type Context = ActionContext<State, State>;
+
+export default createStore<State>({
   state: {
     data: null,
     selectedItems: {},
@@ -15,58 +25,57 @@ export default createStore({
     flagId: "",
   },
   mutations: {
-    setFlagId(state, id) {
+    setFlagId(state: State, id: string) {
       state.flagId = id;
-      console.log(state.flagId);
     },
-    setData(state, data) {
+    setData(state: State, data: any) {
       state.data = data;
     },
-    setFAQQuestions(state, questions) {
+    setFAQQuestions(state: State, questions: any[]) {
       state.faqQuestions = questions;
     },
-    setHeaderInfo(state, info) {
+    setHeaderInfo(state: State, info: any[]) {
       state.headerInfo = info;
     },
-    removeFile(state, fileName) {
+    removeFile(state: State, fileName: string) {
       if (state.selectedItems.files) {
         state.selectedItems.files = state.selectedItems.files.filter(
-          (file) => file.FILE_NAME !== fileName
+          (file: { FILE_NAME: string; }) => file.FILE_NAME !== fileName
         );
       }
     },
-    addSelectedItem(state, item) {
+    addSelectedItem(state: State, item: Partial<State['selectedItems']>) {
       let updatedItems = { ...state.selectedItems };
 
-      if (item.files && Array.isArray(item.files)) {
+      if ('files' in item && Array.isArray(item.files)) {
         const existingFiles = updatedItems.files || [];
-        updatedItems.files = existingFiles.map((existingFile) => {
-          const newFile = item.files.find(
-            (f) => f.FILE_HASH === existingFile.FILE_HASH
+        updatedItems.files = existingFiles.map((existingFile: { FILE_HASH: any; }) => {
+          const newFile = item.files?.find(
+            (f: { FILE_HASH: any; }) => f.FILE_HASH === existingFile.FILE_HASH
           );
           return newFile ? { ...existingFile, ...newFile } : existingFile;
         });
 
-        // Добавляем новые файлы, которых нет в существующем списке
         const newFiles = item.files.filter(
           (newFile) =>
             !existingFiles.some(
-              (existingFile) => existingFile.FILE_HASH === newFile.FILE_HASH
+              (existingFile: { FILE_HASH: any; }) => existingFile.FILE_HASH === newFile.FILE_HASH
             )
         );
-        updatedItems.files = [...updatedItems.files, ...newFiles];
+        updatedItems.files = [...(updatedItems.files || []), ...newFiles];
       }
-      if (item.roles && Array.isArray(item.roles)) {
+
+      if ('roles' in item && Array.isArray(item.roles)) {
         updatedItems.roles = item.roles;
       }
 
       for (const [key, value] of Object.entries(item)) {
-        if (key !== "files" && key !== "roles") {
+        if (key !== 'files' && key !== 'roles') {
           updatedItems[key] = value;
         }
       }
 
-      if (item.HASH_TYPE) {
+      if ('HASH_TYPE' in item) {
         state.filesInfoHash = {
           ...state.filesInfoHash,
           HASH_TYPE: item.HASH_TYPE,
@@ -74,30 +83,31 @@ export default createStore({
       }
 
       state.selectedItems = updatedItems;
-      console.log(state.selectedItems);
     },
-    addUploadInfoHash(state, item) {
+    addUploadInfoHash(state: State, item: { FILE_HASH: Record<string, string>[] }) {
       const newHashes = Array.isArray(item.FILE_HASH) ? item.FILE_HASH : [];
       const existingHashes = state.filesInfoHash.FILE_HASH || [];
 
       state.filesInfoHash = {
+        ...state.filesInfoHash,
         FILE_HASH: [...existingHashes, ...newHashes],
       };
-      console.log(state.filesInfoHash);
     },
-    setHTMLPreview(state, html) {
+    setHTMLPreview(state: State, html: string) {
       state.htmlPreview = html;
     },
-    removeSelectedItem(state, itemId) {
-      delete state.selectedItems[itemId];
+    removeSelectedItem(state: State, itemId: string) {
+      if (state.selectedItems[itemId]) {
+        delete state.selectedItems[itemId];
+      }
     },
-    clearSelectedItems(state) {
+    clearSelectedItems(state: State) {
       state.selectedItems = {};
     },
-    updateFileHashes(state, { newHashes, selectedEncoding }) {
+    updateFileHashes(state: State, { newHashes, selectedEncoding }: { newHashes: { FILE_HASH: string }[], selectedEncoding: string }) {
       if (state.selectedItems.files) {
         state.selectedItems.files = state.selectedItems.files.map(
-          (file, index) => ({
+          (file: { FILE_HASH: any; }, index: number) => ({
             ...file,
             FILE_HASH: newHashes[index]?.FILE_HASH || file.FILE_HASH,
           })
@@ -107,12 +117,12 @@ export default createStore({
     },
   },
   actions: {
-    removeFileFromStore({ commit }, fileName) {
+    removeFileFromStore({ commit }: Context, fileName: string) {
       commit("removeFile", fileName);
     },
-    async fetchData({ commit }) {
+    async fetchData({ commit }: Context) {
       try {
-        const response = await axios.get(
+        const response = await axios.get<{ data: any }>(
           "https://devserv.rsexpertiza.ru/api/document-constructor"
         );
         commit("setData", response.data.data);
@@ -120,14 +130,14 @@ export default createStore({
         console.error("Error fetching data:", error);
       }
     },
-    async uploadFile({ commit, state }, files) {
+    async uploadFile({ commit, state }: Context, files: File[]) {
       try {
         const formData = new FormData();
         files.forEach((file, index) => {
           formData.append(`file${index}`, file);
         });
 
-        const response = await axios.post(
+        const response = await axios.post<{ data: Record<string, any> }>(
           "https://devserv.rsexpertiza.ru/api/document-constructor/files-info",
           formData,
           { headers: { "Content-Type": "multipart/form-data" } }
@@ -153,11 +163,7 @@ export default createStore({
               ],
             });
             commit("addUploadInfoHash", {
-              FILE_HASH: [
-                {
-                  ...fileData.hash,
-                },
-              ],
+              FILE_HASH: [fileData.hash],
             });
           });
           commit("addSelectedItem", { roles: [] });
@@ -168,36 +174,27 @@ export default createStore({
         console.error("Error uploading file:", error);
       }
     },
-
-    async getHTMLDOC({ commit, state }) {
+    async getHTMLDOC({ commit, state }: Context) {
       try {
-        const response = await axios.post(
+        const response = await axios.post<{ data: string }>(
           "https://devserv.rsexpertiza.ru/api/document-constructor/generate/preview",
           JSON.stringify(state.selectedItems),
-          {
-            headers: {
-              // 'Content-Type': 'application/json',
-              // "Access-Control-Allow-Origin": "*",
-              // "Data-Type": "json",
-            },
-          }
+
         );
         commit("setHTMLPreview", response.data.data);
       } catch (error) {
         console.error("Error generating HTML preview:", error);
       }
     },
-    async downloadDocument({ state }) {
+    async downloadDocument({ state }: Context) {
       try {
-        const response = await axios.post(
+        const response = await axios.post<{ data: string }>(
           "https://devserv.rsexpertiza.ru/api/document-constructor/generate/file",
           JSON.stringify(state.selectedItems)
         );
 
         if (response.data && response.data.data) {
           const downloadUrl = `https://devserv.rsexpertiza.ru${response.data.data}`;
-
-          // Open the URL in a new window
           window.open(downloadUrl, "_blank");
         } else {
           throw new Error("Download URL not found in the response");
@@ -207,14 +204,13 @@ export default createStore({
         throw error;
       }
     },
-    async getVersions({ commit, state }) {
+    async getVersions({ commit }: Context) {
       try {
-        const versionId = window.versionid || '20';
-        const response = await axios.get(
+        const versionId = (window as any).versionid || '20';
+        const response = await axios.get<{ data: { [key: string]: { json: string } } }>(
           `https://devserv.rsexpertiza.ru/api/document-constructor/versions?id=${versionId}`
-        )
+        );
         const newData = JSON.parse(response.data.data["0"].json);
-        console.log(newData);
         if (newData) {
           commit("clearSelectedItems");
           commit("addSelectedItem", newData);
@@ -224,9 +220,9 @@ export default createStore({
         throw error;
       }
     },
-    async getFAQQuestions({ commit }) {
+    async getFAQQuestions({ commit }: Context) {
       try {
-        const response = await axios.get(
+        const response = await axios.get<{ data: any[] }>(
           "https://devserv.rsexpertiza.ru/api/document-constructor/questions"
         );
         if (response.data && response.data.data) {
@@ -239,27 +235,26 @@ export default createStore({
         throw error;
       }
     },
-    async getHeaderInfo({ commit }) {
+    async getHeaderInfo({ commit }: Context) {
       try {
-        const response = await axios.get(
+        const response = await axios.get<{ data: any[] }>(
           "https://devserv.rsexpertiza.ru/api/document-constructor/header"
         );
         if (response.data) {
           commit("setHeaderInfo", response.data.data);
         } else {
-          throw new Error("FAQ data not found in the response");
+          throw new Error("Header data not found in the response");
         }
       } catch (error) {
-        console.error("Error fetching FAQ questions:", error);
+        console.error("Error fetching header info:", error);
         throw error;
       }
     },
   },
-
   getters: {
-    getData: (state) => state.data,
-    getSelectedItems: (state) => state.selectedItems,
-    getFAQQuestions: (state) => state.faqQuestions,
-    getHeaderInfo: (state) => state.headerInfo,
+    getData: (state: State) => state.data,
+    getSelectedItems: (state: State) => state.selectedItems,
+    getFAQQuestions: (state: State) => state.faqQuestions,
+    getHeaderInfo: (state: State) => state.headerInfo,
   },
 });

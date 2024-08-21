@@ -13,7 +13,7 @@
 
 
             <div class="content">
-                <div class="conten-body" v-for="(item, index) in formattedItems" :key="item.id">
+                <div class="conten-body" v-for="item in formattedItems" :key="item.id">
                     <div class="content-item"
                         :class="{ 'selected-item': item.id === store.state.selectedItems.DOCUMENT_TYPE_ID }">
                         <div class="outline">
@@ -41,12 +41,21 @@
         </div>
     </div>
 </template>
-<script>
+<script lang="ts">
 import { defineComponent, ref, onMounted, computed } from 'vue';
 import ProgressSpinner from 'primevue/progressspinner';
 import Image from 'primevue/image';
 import { useStore } from 'vuex';
+interface StepData {
+    elements?: {
+        [key: string]: any;
+    };
+}
+interface FormattedItem {
+    id: string | number;
+    img: string;
 
+}
 export default defineComponent({
     name: 'constructorListContent',
     components: {
@@ -54,14 +63,16 @@ export default defineComponent({
         ProgressSpinner,
     },
     setup() {
-        const stepData = ref({});
+        const stepData = ref<StepData>({});
         const store = useStore();
+        // @ts-ignore
         const data = store.state.data;
         const loading = computed(() => !store.getters.getData);
         onMounted(async () => {
             await store.dispatch('fetchData');
             const data = store.getters.getData;
             stepData.value = data.step_1 || {};
+            // @ts-ignore
             loading.value = false;
         });
         return {
@@ -72,16 +83,15 @@ export default defineComponent({
     },
 
     computed: {
-        formattedItems() {
-            if (this.stepData && this.stepData.elements && this.stepData.elements["48276"]) {
-                return Object.values(this.stepData.elements["48276"]);
+        formattedItems(): FormattedItem[] {
+            if (this.stepData.elements && this.stepData.elements["48276"]) {
+                return Object.values(this.stepData.elements["48276"]) as FormattedItem[];
             }
             return [];
         }
     },
-
     methods: {
-        selectItem(item) {
+        selectItem(item: FormattedItem) {
             const totalItems = this.formattedItems.length;
             if (totalItems >= 2 && item.id === this.formattedItems[1].id) {
                 this.store.commit('setFlagId', item.id);

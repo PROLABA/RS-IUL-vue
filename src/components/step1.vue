@@ -35,7 +35,7 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent, ref, onMounted, computed } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
@@ -52,22 +52,21 @@ export default defineComponent({
         InputText
     },
     setup() {
-        const selectedType = ref(null);
         const selectedCustom = ref(null);
         const showAdditionalDropdowns = ref(false);
         const store = useStore();
         const router = useRouter();
-        const stepData = ref({});
-        const types = ref([]);
-
+        const stepData = ref<any>({});
+        const types = ref<Array<{ name: string; code: string }>>([]);
         const sectionDataSelected = store.state.selectedItems.DOCUMENT_NAME
         const documentTypeSelected = store.state.selectedItems.DOCUMENT_TYPE_PREW
-        const selectedSection = ref(null);
-
+        const selectedType = ref<{ name: string; code: string } | null>(null);
+        const selectedSection = ref<{ name: string; code: string } | null>(null);
         const filteredSections = computed(() => {
             if (!selectedType.value || !stepData.value) return [];
-
+            // @ts-ignore
             const typeId = selectedType.value.code;
+            // @ts-ignore
             const sections = stepData.value['48277'].values[typeId]?.values || {};
 
             return Object.keys(sections).map(key => ({
@@ -90,7 +89,7 @@ export default defineComponent({
             }
         });
 
-        const formatTypes = (data) => {
+        const formatTypes = (data: any) => {
             if (!data || !data["48277"]) return [];
             return Object.keys(data["48277"].values).map(key => ({
                 name: data["48277"].values[key].value,
@@ -105,15 +104,18 @@ export default defineComponent({
         const updateSelectedItems = () => {
             // Очистить текущие выбранные элементы
             //  store.commit('clearSelectedItems');
-            if (selectedSection.value) {
+            if (selectedSection.value && selectedType.value) {
+                // @ts-ignore
                 store.commit('addSelectedItem', {
+                    // @ts-ignore
                     DOCUMENT_NAME: selectedSection.value.name,
                     DOCUMENT_TYPE_PREW: selectedType.value.name
                 });
-            } else if (selectedCustom.value) {
+            } else if (selectedCustom.value && selectedType.value) {
                 store.commit('addSelectedItem', {
-                    DOCUMENT_NAME: selectedCustom.value,
-                    DOCUMENT_TYPE_PREW: selectedType.value.name
+                    // @ts-ignore
+                    DOCUMENT_NAME: selectedCustom?.value || '',
+                    DOCUMENT_TYPE_PREW: selectedType?.value.name || '',
 
                 });
             }

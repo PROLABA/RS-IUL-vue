@@ -2,7 +2,7 @@
   <Toast />
   <router-view />
 </template>
-<script>
+<script lang="ts">
 import { defineComponent } from 'vue'
 import mainPages from './main-pages.vue'
 import Toast from 'primevue/toast'
@@ -12,5 +12,6 @@ export default defineComponent({
     Toast,
   }
 })
-window.versionid
+// @ts-ignore
+window.versionid 
 </script>

@@ -15,7 +15,7 @@
                         </svg>
                     </div>
                     <a href="#" @click.prevent="openVideoInstructions">Смотреть видео иснструкцию</a>
-                    <VideoInstructions ref="videoInstructionsRef" :videoLink="vidoLink"></VideoInstructions>
+                    <VideoInstructions ref="videoInstructionsRef" :videoLink="vidoLink || ''"></VideoInstructions>
                 </div>
             </div>
             <div class="white-bg-text">
@@ -47,7 +47,7 @@
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, computed, watch, onMounted } from 'vue'
+import { defineComponent, ref, onMounted } from 'vue'
 import VideoInstructions from './VideoInstructions.vue'
 import { useStore } from 'vuex';
 

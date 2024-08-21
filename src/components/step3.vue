@@ -144,13 +144,13 @@ export default defineComponent({
         const flagId = store.state.flagId;
         const objectName = ref('' || fileDataSelected);
         const documentName = ref('');
-        const htmlPreview = ref('');
+        const htmlPreview = ref<string>('');
         const swiperRef = ref(null);
         const fileNameWx = ref('');
 
 
         const isNextButtonEnabled = computed(() => {
-            return objectName.value !== '' && documentName.value !== '' && date.value !== null && fileNameWx.value !== '';
+            return objectName.value !== '' && documentName.value !== '' && date.value !== null;
         });
         const iframeSource = computed(() => {
             return URL.createObjectURL(new Blob([htmlPreview.value], { type: 'text/html' }));
