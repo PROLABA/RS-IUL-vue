@@ -96,7 +96,7 @@ export default defineComponent({
 
         const mappedFiles = computed(() => {
             const files = store.state.selectedItems.files || [];
-            return files.map(file => ({
+            return files.map((file: { FILE_NAME: any; FILE_SIZE: any; FILE_HASH: any; }) => ({
                 name: file.FILE_NAME,
                 size: file.FILE_SIZE,
                 hash: file.FILE_HASH,

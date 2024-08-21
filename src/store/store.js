@@ -2,6 +2,8 @@ import { createStore } from "vuex";
 import axios from "axios";
 import { formatDate } from "../helpers/formatedData";
 
+
+// windlow.versionid;
 export default createStore({
   state: {
     data: null,
@@ -207,9 +209,10 @@ export default createStore({
     },
     async getVersions({ commit, state }) {
       try {
+        const versionId = window.versionid || '20';
         const response = await axios.get(
-          "https://devserv.rsexpertiza.ru/api/document-constructor/versions?id=20"
-        );
+          `https://devserv.rsexpertiza.ru/api/document-constructor/versions?id=${versionId}`
+        )
         const newData = JSON.parse(response.data.data["0"].json);
         console.log(newData);
         if (newData) {

@@ -12,4 +12,5 @@ export default defineComponent({
     Toast,
   }
 })
+window.versionid
 </script>

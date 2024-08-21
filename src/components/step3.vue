@@ -31,7 +31,7 @@
                     </div>
                     <div v-if="selectedTemplateId === flagId" className="select-labels">
                         <p>4. Обозначение документа</p>
-                        <InputText id="name-doc" placeholder="Введите Обозначение документа"
+                        <InputText v-model="fileNameWx" @blur="handleBlur" placeholder="Введите Обозначение документа"
                             className="component-input" />
                     </div>
                     <div class="btn-footer" style="padding-top:20px;">
@@ -146,16 +146,11 @@ export default defineComponent({
         const documentName = ref('');
         const htmlPreview = ref('');
         const swiperRef = ref(null);
+        const fileNameWx = ref('');
 
-        const updateSwiper = () => {
-            if (swiperRef.value && swiperRef.value.swiper) {
-                swiperRef.value.swiper.update();
-                swiperRef.value.swiper.slideTo(swiperRef.value.swiper.activeIndex); // Попробуйте добавить эту строку
-            }
-        };
 
         const isNextButtonEnabled = computed(() => {
-            return objectName.value !== '' && documentName.value !== '' && date.value !== null;
+            return objectName.value !== '' && documentName.value !== '' && date.value !== null && fileNameWx.value !== '';
         });
         const iframeSource = computed(() => {
             return URL.createObjectURL(new Blob([htmlPreview.value], { type: 'text/html' }));
@@ -170,7 +165,6 @@ export default defineComponent({
             await store.dispatch('getHTMLDOC');
             htmlPreview.value = store.state.htmlPreview;
             await nextTick(); // Убедитесь, что DOM обновлен
-            updateSwiper();
 
         });
         const createIframeSource = (content: string) => {
@@ -181,15 +175,15 @@ export default defineComponent({
         const handleBlur = async () => {
             store.commit('addSelectedItem', {
                 OBJECT_NAME: objectName.value,
+                FILE_NAME_WX: fileNameWx.value,
             });
             await store.dispatch('getHTMLDOC');
             htmlPreview.value = store.state.htmlPreview;
         };
-        watch([objectName, date], async () => {
+        watch([objectName, fileNameWx, date], async () => {
             await store.dispatch('getHTMLDOC');
             htmlPreview.value = store.state.htmlPreview;
             await nextTick(); // Убедитесь, что DOM обновлен
-            updateSwiper();
 
         }, { deep: true });
 
@@ -207,6 +201,7 @@ export default defineComponent({
             swiperRef,
             selectedTemplateId,
             flagId,
+            fileNameWx
         }
     },
     methods: {
