@@ -220,6 +220,11 @@ export default defineComponent({
                     name: value as string,
                     value: key
                 }));
+                const storedEncoding = store.state.selectedItems.HASH_TYPE;
+                if (storedEncoding) {
+                    //@ts-ignore
+                    selectedEncoding.value = encoding.value.find(e => e.name === storedEncoding) || null;
+                }
                 await fetchHtmlPreview();
             } catch (error) {
                 console.error('Ошибка при загрузке данных:', error);

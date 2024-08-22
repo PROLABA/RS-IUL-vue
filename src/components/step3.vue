@@ -136,7 +136,7 @@ export default defineComponent({
         SwiperSlide
     },
     setup() {
-        const date = ref();
+        const date = ref<Date | null>(null);
         const store = useStore();
 
         const fileDataSelected = store.state.selectedItems.OBJECT_NAME;
@@ -150,7 +150,11 @@ export default defineComponent({
 
 
         const isNextButtonEnabled = computed(() => {
-            return objectName.value !== '' && documentName.value !== '' && date.value !== null;
+            return objectName.value !== '' &&
+                documentName.value !== '' &&
+                date.value !== null &&
+                date.value !== undefined ||
+                (selectedTemplateId.value !== flagId.value || fileNameWx.value !== '');
         });
         const iframeSource = computed(() => {
             return URL.createObjectURL(new Blob([htmlPreview.value], { type: 'text/html' }));
@@ -345,10 +349,22 @@ export default defineComponent({
 }
 
 iframe {
-    width: 100%;
+    width: 471px;
     height: 597px;
 
 }
+
+iframe {
+    border: none;
+    /* Убираем рамку iframe */
+
+}
+
+iframe body {
+    overflow-x: hidden;
+
+}
+
 
 
 .p-datepicker-input {

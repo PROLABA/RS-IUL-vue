@@ -13,16 +13,16 @@
                         class="
                         type-document" @change="onFirstDropdownChange" />
                 </div>
-                <div v-if="showAdditionalDropdowns || sectionDataSelected" class="select-labels">
+                <div v-if="showAdditionalDropdowns || sectionDataSelected || storedCustomValue" class="select-labels">
                     <p>2. Название раздела</p>
                     <Select style="width: 100%;" filter :loading="isLoading" v-model="selectedSection"
                         :options="filteredSections" optionLabel="name"
                         :placeholder="sectionDataSelected ? sectionDataSelected : ' Выберите название раздела'"
                         class="type-document" />
                 </div>
-                <div v-if="showAdditionalDropdowns || sectionDataSelected || sectionDataSelected" class="select-labels">
+                <div v-if="showAdditionalDropdowns || sectionDataSelected || storedCustomValue" class="select-labels">
                     <p>3. Если выше не нашли нужного варианта</p>
-                    <InputText class="customSelect" v-model="selectedCustom" placeholder="Ваш вариант" />
+                    <InputText class="customSelect" v-model="storedCustomValue" @input="updateCustomValue" placeholder="Ваш вариант" />
 
                 </div>
                 <div class="flex-just-spcbtw"
@@ -62,6 +62,8 @@ export default defineComponent({
         const documentTypeSelected = store.state.selectedItems.DOCUMENT_TYPE_PREW
         const selectedType = ref<{ name: string; code: string } | null>(null);
         const selectedSection = ref<{ name: string; code: string } | null>(null);
+        const storedCustomValue = computed(() => store.state.selectedItems.DOCUMENT_NAME_CUSTOM || '');
+
         const filteredSections = computed(() => {
             if (!selectedType.value || !stepData.value) return [];
             // @ts-ignore
@@ -102,23 +104,24 @@ export default defineComponent({
         };
 
         const updateSelectedItems = () => {
-            // Очистить текущие выбранные элементы
-            //  store.commit('clearSelectedItems');
             if (selectedSection.value && selectedType.value) {
-                // @ts-ignore
                 store.commit('addSelectedItem', {
-                    // @ts-ignore
                     DOCUMENT_NAME: selectedSection.value.name,
-                    DOCUMENT_TYPE_PREW: selectedType.value.name
+                    DOCUMENT_TYPE_PREW: selectedType.value.name,
                 });
-            } else if (selectedCustom.value && selectedType.value) {
+            } else if (storedCustomValue.value && selectedType.value) {
                 store.commit('addSelectedItem', {
-                    // @ts-ignore
-                    DOCUMENT_NAME: selectedCustom?.value || '',
-                    DOCUMENT_TYPE_PREW: selectedType?.value.name || '',
-
+                    DOCUMENT_NAME_CUSTOM: storedCustomValue.value,
+                    DOCUMENT_TYPE_PREW: selectedType.value.name,
                 });
             }
+        };
+        const updateCustomValue = (event: Event) => {
+            const value = (event.target as HTMLInputElement).value;
+            store.commit('addSelectedItem', {
+                DOCUMENT_NAME_CUSTOM: value,
+                DOCUMENT_TYPE_PREW: selectedType.value?.name || '',
+            });
         };
 
         const goToStep2 = async () => {
@@ -143,8 +146,9 @@ export default defineComponent({
             isLoading,
             stepData,
             sectionDataSelected,
-            documentTypeSelected
-
+            documentTypeSelected,
+            updateCustomValue,
+            storedCustomValue
         };
     }
 });

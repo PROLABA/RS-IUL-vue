@@ -74,7 +74,7 @@ export default defineComponent({
         };
 
         const goToStep5 = () => {
-            router.push('/step4');
+            router.push('/step5');
         };
 
         return {

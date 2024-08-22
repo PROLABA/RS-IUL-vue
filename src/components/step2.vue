@@ -104,7 +104,7 @@ export default defineComponent({
         });
 
         watchEffect(() => {
-            selectedFiles.value = [...mappedFiles.value, ...selectedFiles.value];
+            selectedFiles.value = mappedFiles.value;
         });
 
         const triggerFileInput = () => {
@@ -144,7 +144,6 @@ export default defineComponent({
             const maxSizeInBytes = 80 * 1024 * 1024; // 80 MB
             const validFiles: File[] = [];
             const allowedExtensions = ['docx', 'doc', 'xlsx', 'xls', 'pdf'];
-            let hasError = false;
 
             for (const file of files) {
                 const fileExtension = file.name.split('.').pop()?.toLowerCase();
@@ -155,17 +154,15 @@ export default defineComponent({
 
                 if (file.size > maxSizeInBytes) {
                     fileSizeError.value = 'Файл не был загружен, так как <br> он превышает допустимый размер файла.';
-                    hasError = true;
-                } else {
+                } else if (!selectedFiles.value.find(f => f.name === file.name && f.size === file.size)) {
                     validFiles.push(file);
                 }
             }
 
-            if (!hasError) {
+            if (validFiles.length > 0) {
                 fileSizeError.value = null;
+                selectedFiles.value = selectedFiles.value.concat(validFiles);
             }
-
-            selectedFiles.value = selectedFiles.value.concat(validFiles);
         };
 
         const removeFile = (fileName: string) => {

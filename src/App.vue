@@ -6,6 +6,7 @@
 import { defineComponent } from 'vue'
 import mainPages from './main-pages.vue'
 import Toast from 'primevue/toast'
+
 export default defineComponent({
   components: {
     mainPages,

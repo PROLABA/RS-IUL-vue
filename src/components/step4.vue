@@ -23,8 +23,7 @@
                             <p>1. Действие</p>
                             <!-- @ts-ignore -->
                             <Select style="width: 100%;" v-model="role.action" :options="actionOption"
-                                optionLabel="name"
-                                :placeholder="role.action.name ? role.action.name : 'Выберите соответствующее действие'" />
+                                optionLabel="name" placeholder=" Выберите соответствующее действие" />
                             <!-- @ts-ignore -->
                             <InputText style="margin-top: 10px;" v-if="role.action.name === 'Свой вариант'"
                                 v-model="role.otherAction" placeholder="Укажите соответствующее действие"
@@ -209,8 +208,10 @@ export default defineComponent({
             if (storedRoles && storedRoles.length > 0) {
                 // @ts-ignore
                 roles.value = storedRoles.map(role => ({
-                    action: { name: role.ACTION, value: '' },
-                    otherAction: role.ACTION === 'Свой вариант' ? role.ACTION : '',
+                    action: role.IS_CUSTOM
+                        ? actionOption.value.find(option => option.name === 'Свой вариант') || { name: 'Свой вариант', value: '' }
+                        : actionOption.value.find(option => option.name === role.ACTION) || { name: '', value: '' },
+                    otherAction: role.IS_CUSTOM ? role.ACTION : '',
                     surname: role.SECOND_NAME,
                     date: role.ROLE_DATE
                 }));
@@ -236,7 +237,8 @@ export default defineComponent({
             const formattedRoles = newRoles.map(role => ({
                 ROLE_DATE: role.date,
                 ACTION: role.action.name === 'Свой вариант' ? role.otherAction : role.action.name,
-                SECOND_NAME: role.surname
+                SECOND_NAME: role.surname,
+                IS_CUSTOM: role.action.name === 'Свой вариант'
             }));
 
             store.commit('addSelectedItem', { roles: formattedRoles });
@@ -366,7 +368,7 @@ export default defineComponent({
     font-weight: 600;
     line-height: 1.2px;
     text-align: left;
-
+    padding-bottom: 22.5px;
 }
 
 .p-datepicker-input {

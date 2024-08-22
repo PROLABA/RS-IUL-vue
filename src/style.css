@@ -27,6 +27,24 @@
   border: 1.5px solid rgba(233, 233, 233, 1) !important
 }
 
+.p-dialog {
+  background-color: #ffffff !important;
+  color: #333333 !important;
+  border-color: transparent !important;
+}
+
+.p-accordionpanel {
+  border-color: #E9E9E9 !important;
+}
+
+.p-accordioncontent-content,
+.p-accordionheader {
+  background-color: #ffffff !important;
+  color: #333333 !important;
+}
+
+
+
 .container {
   width: 100%;
   max-width: 1280px;
