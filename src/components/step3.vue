@@ -24,7 +24,7 @@
                         <p>3. Дата</p>
                         <DatePicker dateFormat="dd.mm.yy" showIcon fluid iconDisplay="input" style="width: 100%;"
                             placeholder="Выберите или введите дату" v-model="date">
-                            <template #inputicon="slotProps">
+                            <template #inputicon="slotProps" @blur="handleBlur">
                                 <i class="pi pi-angle-down" @click="slotProps.clickCallback" />
                             </template>
                         </DatePicker>
@@ -136,26 +136,40 @@ export default defineComponent({
         SwiperSlide
     },
     setup() {
-        const date = ref<Date | null>(null);
+
         const store = useStore();
 
         const fileDataSelected = store.state.selectedItems.OBJECT_NAME;
         const selectedTemplateId = store.state.selectedItems.DOCUMENT_TYPE_ID;
+        const selectedData = store.state.selectedItems.DATA_TEST;
+        const selectedFileNameWx = store.state.selectedItems.FILE_NAME_WX;
+
+        const date = ref<string | null>(store.state.selectedItems.DATA_TEST || null);
+
         const flagId = store.state.flagId;
         const objectName = ref('' || fileDataSelected);
         const documentName = ref('');
         const htmlPreview = ref<string>('');
         const swiperRef = ref(null);
-        const fileNameWx = ref('');
+        const fileNameWx = ref('' || selectedFileNameWx);;
 
 
         const isNextButtonEnabled = computed(() => {
-            return objectName.value !== '' &&
+            return fileNameWx.value ?
+                objectName.value !== '' &&
                 documentName.value !== '' &&
                 date.value !== null &&
-                date.value !== undefined ||
-                (selectedTemplateId.value !== flagId.value || fileNameWx.value !== '');
+                date.value !== undefined
+                & fileNameWx.value !== ''
+                :
+                objectName.value !== '' &&
+                documentName.value !== '' &&
+                date.value !== null &&
+                date.value !== undefined
+                & fileNameWx.value !== ''
+                ;
         });
+        
         const iframeSource = computed(() => {
             return URL.createObjectURL(new Blob([htmlPreview.value], { type: 'text/html' }));
         });
@@ -180,16 +194,21 @@ export default defineComponent({
             store.commit('addSelectedItem', {
                 OBJECT_NAME: objectName.value,
                 FILE_NAME_WX: fileNameWx.value,
+                DATA_TEST: date.value,
             });
             await store.dispatch('getHTMLDOC');
             htmlPreview.value = store.state.htmlPreview;
         };
+        watch(date, (newValue) => {
+            store.commit('addSelectedItem', { DATA_TEST: newValue });
+        });
         watch([objectName, fileNameWx, date], async () => {
             await store.dispatch('getHTMLDOC');
             htmlPreview.value = store.state.htmlPreview;
-            await nextTick(); // Убедитесь, что DOM обновлен
+            await nextTick();
 
         }, { deep: true });
+
 
         return {
             date,
@@ -348,7 +367,7 @@ export default defineComponent({
     padding: 19px;
 }
 
-iframe {
+.dotted-border iframe {
     width: 471px;
     height: 597px;
 

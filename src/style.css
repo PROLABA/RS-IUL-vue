@@ -1,6 +1,10 @@
 :root {
   color-scheme: light !important;
 }
+.p-button-text:not(:disabled):hover {
+  background: transparent !important;
+
+}
 
 .p-select-label,
 .p-inputtext,

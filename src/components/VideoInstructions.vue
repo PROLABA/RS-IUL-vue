@@ -7,8 +7,8 @@
                 </div>
             </template>
             <p>
-                
-                <iframe width="100%" height="315" :src="videoLink" frameborder="0" allow="autoplay; encrypted-media"
+
+                <iframe width="100%" height="600px" :src="videoLink" frameborder="0" allow="autoplay; encrypted-media"
                     allowfullscreen></iframe>
             </p>
         </Dialog>
