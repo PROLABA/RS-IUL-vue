@@ -74,6 +74,7 @@ export default defineComponent({
             stepData.value = data.step_1 || {};
             // @ts-ignore
             loading.value = false;
+            await store.dispatch('fetchData');
         });
         return {
             store,

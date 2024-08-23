@@ -120,7 +120,7 @@ import { useStore } from 'vuex';
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import 'swiper/swiper-bundle.css';
 import { Navigation, Pagination } from 'swiper/modules';
-
+import { formatDateDDMMYY } from "./../helpers/formatedData"
 
 
 
@@ -141,10 +141,11 @@ export default defineComponent({
 
         const fileDataSelected = store.state.selectedItems.OBJECT_NAME;
         const selectedTemplateId = store.state.selectedItems.DOCUMENT_TYPE_ID;
+        //@ts-ignore
         const selectedData = store.state.selectedItems.DATA_TEST;
         const selectedFileNameWx = store.state.selectedItems.FILE_NAME_WX;
 
-        const date = ref<string | null>(store.state.selectedItems.DATA_TEST || null);
+        const date = ref<string | null>(formatDateDDMMYY(store.state.selectedItems.DATA_TEST) || null);
 
         const flagId = store.state.flagId;
         const objectName = ref('' || fileDataSelected);
@@ -158,18 +159,15 @@ export default defineComponent({
             return fileNameWx.value ?
                 objectName.value !== '' &&
                 documentName.value !== '' &&
-                date.value !== null &&
-                date.value !== undefined
-                & fileNameWx.value !== ''
+                date.value !== null
                 :
                 objectName.value !== '' &&
                 documentName.value !== '' &&
                 date.value !== null &&
-                date.value !== undefined
-                & fileNameWx.value !== ''
+                fileNameWx.value !== ''
                 ;
         });
-        
+
         const iframeSource = computed(() => {
             return URL.createObjectURL(new Blob([htmlPreview.value], { type: 'text/html' }));
         });

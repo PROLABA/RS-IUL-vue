@@ -142,7 +142,7 @@ import { Swiper, SwiperSlide } from 'swiper/vue';
 import 'swiper/swiper-bundle.css';
 import { Navigation, Pagination } from 'swiper/modules';
 import { useRouter } from 'vue-router';
-
+import { formatDateDDMMYY } from "./../helpers/formatedData"
 export default defineComponent({
     name: 'Step4',
     components: {
@@ -213,9 +213,10 @@ export default defineComponent({
                         : actionOption.value.find(option => option.name === role.ACTION) || { name: '', value: '' },
                     otherAction: role.IS_CUSTOM ? role.ACTION : '',
                     surname: role.SECOND_NAME,
-                    date: role.ROLE_DATE
+                    date: formatDateDDMMYY(role.ROLE_DATE)
                 }));
             } else {
+
                 // @ts-ignore
                 roles.value = [{
                     action: { name: '', value: '' },

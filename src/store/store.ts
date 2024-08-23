@@ -1,6 +1,7 @@
 import { createStore, ActionContext } from "vuex";
 import axios from "axios";
 import { formatDate } from "../helpers/formatedData";
+import { vId } from "../main";
 
 interface State {
   data: any
@@ -81,7 +82,7 @@ export default createStore<State>({
           HASH_TYPE: item.HASH_TYPE,
         };
       }
-      
+
       state.selectedItems = updatedItems;
     },
     addUploadInfoHash(state: State, item: { FILE_HASH: Record<string, string>[] }) {
@@ -207,7 +208,7 @@ export default createStore<State>({
     async getVersions({ commit }: Context) {
       try {
         // @ts-ignore
-        const versionId = window.versionid;
+        const versionId = vId;
         if (versionId !== undefined) {
           const response = await axios.get<{ data: { [key: string]: { json: string } } }>(
             `https://devserv.rsexpertiza.ru/api/document-constructor/versions?id=${versionId}`

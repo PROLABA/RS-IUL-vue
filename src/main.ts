@@ -7,7 +7,8 @@ import { ru } from './helper/local';
 import router from './router.ts';
 import ToastService from 'primevue/toastservice';
 import store from './store/store.ts';
-
+//@ts-ignore
+export const vId = window.versionId
 const app = createApp(App);
 app.use(PrimeVue, {
     locale: ru,
