@@ -144,8 +144,9 @@ export default defineComponent({
         //@ts-ignore
         const selectedData = store.state.selectedItems.DATA_TEST;
         const selectedFileNameWx = store.state.selectedItems.FILE_NAME_WX;
-
-        const date = ref<string | null>(formatDateDDMMYY(store.state.selectedItems.DATA_TEST) || null);
+        const editedData = formatDateDDMMYY(selectedData)
+        console.log(editedData)
+        const date = ref<string | null>(editedData ? editedData : null || null);
 
         const flagId = store.state.flagId;
         const objectName = ref('' || fileDataSelected);

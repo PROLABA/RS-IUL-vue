@@ -153,6 +153,7 @@ export default defineComponent({
 
         const goToStep1 = () => {
             store.commit('clearSelectedItems');
+            store.commit('clearCureentVersion')
             router.push('/');
         };
 

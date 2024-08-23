@@ -11,12 +11,14 @@ interface State {
   faqQuestions: any[]
   headerInfo: any[]
   flagId: string
+  currentVersionId: string,
 }
 
 type Context = ActionContext<State, State>;
 
 export default createStore<State>({
   state: {
+    currentVersionId: '',
     data: null,
     selectedItems: {},
     htmlPreview: "",
@@ -26,11 +28,20 @@ export default createStore<State>({
     flagId: "",
   },
   mutations: {
+    setCurrentVersionId(state, id) {
+      state.currentVersionId = id;
+    },
+    clearCureentVersion(state: State) {
+      state.currentVersionId = '';
+    },
     setFlagId(state: State, id: string) {
       state.flagId = id;
     },
     setData(state: State, data: any) {
       state.data = data;
+    },
+    clearSelectedItems(state: State) {
+      state.selectedItems = {};
     },
     setFAQQuestions(state: State, questions: any[]) {
       state.faqQuestions = questions;
@@ -102,9 +113,7 @@ export default createStore<State>({
         delete state.selectedItems[itemId];
       }
     },
-    clearSelectedItems(state: State) {
-      state.selectedItems = {};
-    },
+
     updateFileHashes(state: State, { newHashes, selectedEncoding }: { newHashes: { FILE_HASH: string }[], selectedEncoding: string }) {
       if (state.selectedItems.files) {
         state.selectedItems.files = state.selectedItems.files.map(
@@ -187,29 +196,45 @@ export default createStore<State>({
         console.error("Error generating HTML preview:", error);
       }
     },
-    async downloadDocument({ state }: Context) {
+    async downloadDocument({ commit, state }: Context) {
       try {
-        const response = await axios.post<{ data: string }>(
+        const response = await axios.post<{
+          file_path: any; data: string; id: any;
+        }>(
           "https://devserv.rsexpertiza.ru/api/document-constructor/generate/file",
           JSON.stringify(state.selectedItems)
         );
-
-        if (response.data && response.data.data) {
-          const downloadUrl = `https://devserv.rsexpertiza.ru${response.data.data}`;
-          window.open(downloadUrl, "_blank");
-        } else {
-          throw new Error("Download URL not found in the response");
+        //@ts-ignore
+        if (response.data.data.id) {
+          //@ts-ignore
+          const currentVersionId = response.data.data.id
+          commit("setCurrentVersionId", currentVersionId);
+          console.log(currentVersionId)
         }
+
+        //@ts-ignore
+        if (response.data.data.file_path) {
+          //@ts-ignore
+          const downloadUrl = `https://devserv.rsexpertiza.ru${response.data.data.file_path}`;
+          window.open(downloadUrl, "_blank");
+
+
+        } else {
+          // throw new Error("Download URL not found in the response");
+        }
+        console.log(response)
       } catch (error) {
         console.error("Error downloading document:", error);
         throw error;
+
       }
     },
-    async getVersions({ commit }: Context) {
+    async getVersions({ commit, state }: Context) {
       try {
         // @ts-ignore
-        const versionId = vId;
-        if (versionId !== undefined) {
+        console.log(state.currentVersionId)
+        const versionId = vId || state.currentVersionId;
+        if (versionId !== undefined && versionId !== null && versionId !== '') {
           const response = await axios.get<{ data: { [key: string]: { json: string } } }>(
             `https://devserv.rsexpertiza.ru/api/document-constructor/versions?id=${versionId}`
           );

@@ -14,5 +14,4 @@ export default defineComponent({
   }
 })
 // @ts-ignore
-window.versionid 
 </script>
