@@ -25,8 +25,8 @@
                                     <img class="iul-imges" :src="`https://devserv.rsexpertiza.ru${item.img}`"
                                         alt="img" />
                                 </template>
-                                <template #preview="slotProps">
-                                    <img :src="`https://devserv.rsexpertiza.ru${item.img}`" alt="preview"
+                                <template  #preview="slotProps">
+                                    <img width="570" height="650" :src="`https://devserv.rsexpertiza.ru${item.img}`" alt="preview"
                                         :style="slotProps.style" @click="slotProps.onClick" />
                                 </template>
                             </Image>

@@ -367,7 +367,7 @@ export default defineComponent({
 }
 
 .dotted-border iframe {
-    width: 471px;
+    width: 100%;
     height: 597px;
 
 }
