@@ -34,6 +34,11 @@
                         <InputText v-model="fileNameWx" @blur="handleBlur" placeholder="Введите Обозначение документа"
                             className="component-input" />
                     </div>
+                    <div className="select-labels">
+                        <p>{{ selectedTemplateId === flagId ? '5' : '4' }}. Номер последего изменения </p>
+                        <InputText v-model="lastNumberChange" @blur="handleBlur"
+                            placeholder="Введите номер последего изменения" className="component-input" />
+                    </div>
                     <div class="btn-footer" style="padding-top:20px;">
                         <div className="flex-just-spcbtw">
                             <Button label="Назад" @click="goToStep2" className="prev" icon="pi pi-arrow-left" text />
@@ -144,6 +149,7 @@ export default defineComponent({
         //@ts-ignore
         const selectedData = store.state.selectedItems.DATA_TEST;
         const selectedFileNameWx = store.state.selectedItems.FILE_NAME_WX;
+        const selectedLastNumberChange = store.state.selectedItems.LAST_NUMBER_CHANGE;
         const editedData = formatDateDDMMYY(selectedData)
         console.log(editedData)
         const date = ref<string | null>(editedData ? editedData : null || null);
@@ -154,16 +160,19 @@ export default defineComponent({
         const htmlPreview = ref<string>('');
         const swiperRef = ref(null);
         const fileNameWx = ref('' || selectedFileNameWx);;
+        const lastNumberChange = ref('' || selectedLastNumberChange)
 
 
         const isNextButtonEnabled = computed(() => {
             return fileNameWx.value ?
                 objectName.value !== '' &&
                 documentName.value !== '' &&
+                lastNumberChange.value !== '' &&
                 date.value !== null
                 :
                 objectName.value !== '' &&
                 documentName.value !== '' &&
+                lastNumberChange.value !== '' &&
                 date.value !== null &&
                 fileNameWx.value !== ''
                 ;
@@ -194,6 +203,8 @@ export default defineComponent({
                 OBJECT_NAME: objectName.value,
                 FILE_NAME_WX: fileNameWx.value,
                 DATA_TEST: date.value,
+                LAST_NUMBER_CHANGE: lastNumberChange.value,
+
             });
             await store.dispatch('getHTMLDOC');
             htmlPreview.value = store.state.htmlPreview;
@@ -201,7 +212,7 @@ export default defineComponent({
         watch(date, (newValue) => {
             store.commit('addSelectedItem', { DATA_TEST: newValue });
         });
-        watch([objectName, fileNameWx, date], async () => {
+        watch([objectName, fileNameWx, date, lastNumberChange], async () => {
             await store.dispatch('getHTMLDOC');
             htmlPreview.value = store.state.htmlPreview;
             await nextTick();
@@ -223,7 +234,8 @@ export default defineComponent({
             swiperRef,
             selectedTemplateId,
             flagId,
-            fileNameWx
+            fileNameWx,
+            lastNumberChange
         }
     },
     methods: {
