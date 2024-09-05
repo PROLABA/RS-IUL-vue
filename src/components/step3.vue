@@ -20,22 +20,22 @@
                         <InputText v-model="documentName" disabled id="name-doc"
                             placeholder="Введите наименование документа" className="component-input" />
                     </div>
-                    <div className="select-labels">
+                    <!-- <div className="select-labels">
                         <p>3. Дата</p>
                         <DatePicker dateFormat="dd.mm.yy" showIcon fluid iconDisplay="input" style="width: 100%;"
                             placeholder="Выберите или введите дату" v-model="date">
                             <template #inputicon="slotProps" @blur="handleBlur">
                                 <i class="pi pi-angle-down" @click="slotProps.clickCallback" />
                             </template>
-                        </DatePicker>
-                    </div>
+</DatePicker>
+</div> -->
                     <div v-if="selectedTemplateId === flagId" className="select-labels">
-                        <p>4. Обозначение документа</p>
+                        <p>3. Обозначение документа</p>
                         <InputText v-model="fileNameWx" @blur="handleBlur" placeholder="Введите Обозначение документа"
                             className="component-input" />
                     </div>
                     <div className="select-labels">
-                        <p>{{ selectedTemplateId === flagId ? '5' : '4' }}. Номер последего изменения </p>
+                        <p>{{ selectedTemplateId === flagId ? '4' : '3' }}. Номер последего изменения </p>
                         <InputText v-model="lastNumberChange" @blur="handleBlur"
                             placeholder="Введите номер последего изменения" className="component-input" />
                     </div>
@@ -164,19 +164,12 @@ export default defineComponent({
 
 
         const isNextButtonEnabled = computed(() => {
-            return fileNameWx.value ?
-                objectName.value !== '' &&
+            return objectName.value !== '' &&
                 documentName.value !== '' &&
                 lastNumberChange.value !== '' &&
-                date.value !== null
-                :
-                objectName.value !== '' &&
-                documentName.value !== '' &&
-                lastNumberChange.value !== '' &&
-                date.value !== null &&
-                fileNameWx.value !== ''
-                ;
+                (selectedTemplateId === flagId ? fileNameWx.value !== '' : true);
         });
+        console.log(!isNextButtonEnabled)
 
         const iframeSource = computed(() => {
             return URL.createObjectURL(new Blob([htmlPreview.value], { type: 'text/html' }));
@@ -202,7 +195,6 @@ export default defineComponent({
             store.commit('addSelectedItem', {
                 OBJECT_NAME: objectName.value,
                 FILE_NAME_WX: fileNameWx.value,
-                DATA_TEST: date.value,
                 LAST_NUMBER_CHANGE: lastNumberChange.value,
 
             });
