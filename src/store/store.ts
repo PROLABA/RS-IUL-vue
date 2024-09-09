@@ -58,7 +58,6 @@ export default createStore<State>({
     },
     addSelectedItem(state: State, item: Partial<State['selectedItems']>) {
       let updatedItems = { ...state.selectedItems };
-
       if ('files' in item && Array.isArray(item.files)) {
         const existingFiles = updatedItems.files || [];
         updatedItems.files = existingFiles.map((existingFile: { FILE_HASH: any; }) => {
@@ -209,7 +208,6 @@ export default createStore<State>({
           //@ts-ignore
           const currentVersionId = response.data.data.id
           commit("setCurrentVersionId", currentVersionId);
-          console.log(currentVersionId)
         }
 
         //@ts-ignore
@@ -222,7 +220,6 @@ export default createStore<State>({
         } else {
           // throw new Error("Download URL not found in the response");
         }
-        console.log(response)
       } catch (error) {
         console.error("Error downloading document:", error);
         throw error;
@@ -232,7 +229,6 @@ export default createStore<State>({
     async getVersions({ commit, state }: Context) {
       try {
         // @ts-ignore
-        console.log(state.currentVersionId)
         const versionId = vId || state.currentVersionId;
         if (versionId !== undefined && versionId !== null && versionId !== '') {
           const response = await axios.get<{ data: { [key: string]: { json: string } } }>(

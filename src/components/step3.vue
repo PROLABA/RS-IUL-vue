@@ -151,8 +151,7 @@ export default defineComponent({
         const selectedFileNameWx = store.state.selectedItems.FILE_NAME_WX;
         const selectedLastNumberChange = store.state.selectedItems.LAST_NUMBER_CHANGE;
         const editedData = formatDateDDMMYY(selectedData)
-        console.log(editedData)
-        const date = ref<string | null>(editedData ? editedData : null || null);
+        const date = ref<string | null>(editedData ? editedData : null);
 
         const flagId = store.state.flagId;
         const objectName = ref('' || fileDataSelected);
