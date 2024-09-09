@@ -39,8 +39,16 @@
                         <div className="select-labels bold-p">
                             <p>3. Дата</p>
                             <!-- @ts-ignore -->
-                            <DatePicker dateFormat="dd.mm.yy" showIcon fluid iconDisplay="input" style="width: 100%;"
-                                placeholder="Выберите или введите дату" v-model="role.date">
+                            <DatePicker
+                                dateFormat="dd.mm.yy"
+                                showIcon
+                                fluid
+                                iconDisplay="input"
+                                style="width: 100%;"
+                                placeholder="Выберите или введите дату"
+                                v-model="role.date"
+                                :disabled="!role.action.name || !role.surname"
+                            >
                                 <template #inputicon="slotProps">
                                     <i class="pi pi-angle-down" @click="slotProps.clickCallback" />
                                 </template>
@@ -143,6 +151,7 @@ import 'swiper/swiper-bundle.css';
 import { Navigation, Pagination } from 'swiper/modules';
 import { useRouter } from 'vue-router';
 import { formatDateDDMMYY } from "./../helpers/formatedData"
+import dayjs from 'dayjs';
 export default defineComponent({
     name: 'Step4',
     components: {
@@ -234,9 +243,10 @@ export default defineComponent({
         }, { deep: true });
         // @ts-ignore
         const updateRolesInStore = (newRoles) => {
+
             // @ts-ignore
             const formattedRoles = newRoles.map(role => ({
-                ROLE_DATE: role.date,
+                ROLE_DATE: dayjs(role.date).toDate().toLocaleDateString(),
                 ACTION: role.action.name === 'Свой вариант' ? role.otherAction : role.action.name,
                 SECOND_NAME: role.surname,
                 IS_CUSTOM: role.action.name === 'Свой вариант'
@@ -253,7 +263,7 @@ export default defineComponent({
             htmlPreview,
             Pagination,
             Navigation,
-            goToStep5,
+            goToStep5,dayjs,
             goToStep3,
         };
     },
