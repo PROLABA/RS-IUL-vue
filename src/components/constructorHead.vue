@@ -68,6 +68,7 @@ export default defineComponent({
                 await store.dispatch('getHeaderInfo');
                 const data = store.getters.getHeaderInfo;
                 title.value = data[0].title;
+              console.log(data[0].subtitle.TEXT)
                 subtitle.value = data[0].subtitle.TEXT;
                 vidoLink.value = data[0].video;
             } catch (error) {

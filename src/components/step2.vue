@@ -143,7 +143,7 @@ export default defineComponent({
         const processFiles = (files: File[]) => {
             const maxSizeInBytes = 80 * 1024 * 1024; // 80 MB
             const validFiles: File[] = [];
-            const allowedExtensions = ['docx', 'doc', 'xlsx', 'xls', 'pdf'];
+            const allowedExtensions = ['docx', 'doc', 'xlsx', 'xls', 'pdf', 'xml'];
 
             for (const file of files) {
                 const fileExtension = file.name.split('.').pop()?.toLowerCase();
