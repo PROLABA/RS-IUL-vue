@@ -3,9 +3,13 @@ export function formatDate(dateString: string) {
     return date.toLocaleString()
 }
 
-export function formatDateDDMMYY(dateString: string) {
+export function formatDateDDMMYY(dateString: string | Date) {
     if (!dateString) {
         return (new Date()).toLocaleDateString(); // Если дата отсутствует или null, возвращаем пустую строку
     }
-    return dateString;
+    if((typeof dateString) === "string") {
+        return dateString;
+    }
+    // @ts-ignore
+    return dateString.toLocaleDateString()
 }

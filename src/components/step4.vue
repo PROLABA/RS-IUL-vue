@@ -246,7 +246,10 @@ export default defineComponent({
 
             // @ts-ignore
             const formattedRoles = newRoles.map(role => ({
-                ROLE_DATE:(role.date ? dayjs(role.date).toDate() : new Date()).toLocaleDateString(),
+                ROLE_DATE: (()=> {
+                  console.log(role.date)
+                  return formatDateDDMMYY(role.date)
+                })(),
                 ACTION: role.action.name === 'Свой вариант' ? role.otherAction : role.action.name,
                 SECOND_NAME: role.surname,
                 IS_CUSTOM: role.action.name === 'Свой вариант'
