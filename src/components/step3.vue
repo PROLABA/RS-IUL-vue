@@ -150,7 +150,7 @@ export default defineComponent({
         const selectedData = store.state.selectedItems.DATA_TEST;
         const selectedFileNameWx = store.state.selectedItems.FILE_NAME_WX;
         const selectedLastNumberChange = store.state.selectedItems.LAST_NUMBER_CHANGE;
-        const editedData = formatDateDDMMYY(selectedData)
+        const editedData = formatDateDDMMYY('27.09.2024')
         const date = ref<string | null>(editedData ? editedData : null);
 
         const flagId = store.state.flagId;
@@ -168,7 +168,6 @@ export default defineComponent({
                 lastNumberChange.value !== '' &&
                 (selectedTemplateId === flagId ? fileNameWx.value !== '' : true);
         });
-        console.log(!isNextButtonEnabled)
 
         const iframeSource = computed(() => {
             return URL.createObjectURL(new Blob([htmlPreview.value], { type: 'text/html' }));
@@ -209,7 +208,6 @@ export default defineComponent({
             await nextTick();
 
         }, { deep: true });
-
 
         return {
             date,

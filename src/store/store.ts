@@ -188,7 +188,6 @@ export default createStore<State>({
         const response = await axios.post<{ data: string }>(
           "https://devserv.rsexpertiza.ru/api/document-constructor/generate/preview",
           JSON.stringify(state.selectedItems),
-
         );
         commit("setHTMLPreview", response.data.data);
       } catch (error) {

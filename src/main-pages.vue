@@ -36,7 +36,6 @@ const fetchQuestions = async () => {
   try {
     await store.dispatch('getFAQQuestions');
     questions.value = store.getters.getFAQQuestions;
-    console.log(questions.value);
   } catch (error) {
     console.error("Error fetching FAQ questions:", error);
   }

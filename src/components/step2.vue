@@ -36,7 +36,7 @@
                             </div>
                             <div v-if="selectedFiles.length" style="padding-bottom:17.5px" class="selectedFiles">
                                 <ul>
-                                    <li v-for="(file, index) in selectedFiles" :key="index">
+                                    <li v-for="(file, index) in selectedFiles" :key="index" style="hyphens: manual;">
                                         {{ file.name }}
                                         <button @click="removeFile(file.name)" class="pi pi-times"></button>
                                     </li>
@@ -391,7 +391,7 @@ export default defineComponent({
     justify-content: space-between;
     gap: 10px;
     padding-top: 17.5px;
-    max-width: 222px
+    word-break: break-all;
 }
 
 
