@@ -2,7 +2,7 @@
     <div class="container">
         <div class="white-bg">
             <div class="content-title">
-                <p>Дополните, пожалуйста информацию</p>
+                <p>Дополните, пожалуйста, информацию</p>
                 <img src="/src/assets/img/result3.png" alt="" srcset="">
                 <!-- <Knob v-model="value" disabled /> -->
 
@@ -27,11 +27,11 @@
                             <template #inputicon="slotProps" @blur="handleBlur">
                                 <i class="pi pi-angle-down" @click="slotProps.clickCallback" />
                             </template>
-</DatePicker>
-</div> -->
+                    </DatePicker>
+                    </div> -->
                     <div v-if="selectedTemplateId === flagId" className="select-labels">
                         <p>3. Обозначение документа</p>
-                        <InputText v-model="fileNameWx" @blur="handleBlur" placeholder="Введите Обозначение документа"
+                        <InputText v-model="fileNameWx" @blur="handleBlur" placeholder="Введите Название документа, например Раздел ПД №12_ОСР_ЛСР"
                             className="component-input" />
                     </div>
                     <div className="select-labels">
