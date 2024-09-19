@@ -1,7 +1,7 @@
 <template>
   <constructorHead />
   <div className="ask-qustion container">
-    <Button label="Часто задаваемы вопросы" @click="openFAQModal" class="faq-button" />
+    <Button label="Часто задаваемые вопросы" @click="openFAQModal" class="faq-button" />
   </div>
   <router-view />
 

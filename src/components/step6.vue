@@ -3,7 +3,7 @@
         <div class="white-bg">
             <div class="content-title">
                 <p>Ваш ИУЛ сформирован, скачайте его:</p>
-<!--                <img src="/src/assets/img/result5.png" alt="" srcset="">-->
+                <img src="/src/assets/img/result6.png" alt="" srcset="">
             </div>
             <div className="flex-just-spcbtw" style="max-width: 495px ;">
                 <Button label="Назад" @click="goToStep5" className="prev" icon="pi pi-arrow-left" text />

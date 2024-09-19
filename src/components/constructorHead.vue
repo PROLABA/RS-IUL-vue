@@ -14,7 +14,7 @@
                                 stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
                     </div>
-                    <a href="#" @click.prevent="openVideoInstructions">Смотреть видео иснструкцию</a>
+                    <a href="#" @click.prevent="openVideoInstructions">Смотреть видео инструкцию</a>
                     <VideoInstructions ref="videoInstructionsRef" :videoLink="vidoLink || ''"></VideoInstructions>
                 </div>
             </div>
