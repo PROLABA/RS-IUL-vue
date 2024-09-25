@@ -23,7 +23,7 @@
                     <Button style="cursor: pointer;" label="Оформить новый ИУЛ" className="create-new-iul"
                         @click="goToStep1" />
                 </div>
-                <div class="acsess-sub-title">Вы можете скачать ИУЛ повторно или отредактировать <br /> в «Моих
+                <div class="acsess-sub-title">Вы можете скачать ИУЛ повторно или отредактировать его <br /> в «Моих
                     документах».
                 </div>
                 <div class="acsess-link"><a href="https://devserv.rsexpertiza.ru/account/history/">Мои документы</a>

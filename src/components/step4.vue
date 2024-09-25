@@ -58,7 +58,7 @@
                     <div class="add-new-role-btn">
                         <div class="description" v-if="roles.length === 1">
                             <span class="pi pi-exclamation-circle"></span>
-                            <p> Вы можете добавить еще <br> роль,если у Вас
+                            <p> Вы можете добавить еще <br> роль, если у Вас
                                 больше
                                 1-ой роли</p>
                         </div>
