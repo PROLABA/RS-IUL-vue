@@ -22,7 +22,8 @@
                 </div>
                 <div v-if="showAdditionalDropdowns || sectionDataSelected || storedCustomValue" class="select-labels">
                     <p>3. Если выше не нашли нужного варианта</p>
-                    <InputText class="customSelect" v-model="storedCustomValue" @input="updateCustomValue" placeholder="Ваш вариант" />
+                    <InputText class="customSelect" v-model="storedCustomValue" @input="updateCustomValue"
+                        placeholder="Ваш вариант" />
 
                 </div>
                 <div class="flex-just-spcbtw"
@@ -65,7 +66,7 @@ export default defineComponent({
         const storedCustomValue = computed(() => store.state.selectedItems.DOCUMENT_NAME_CUSTOM || '');
         const selectedDocumentId = computed(() => store.state.selectedItems.DOCUMENT_TYPE_ID);
         // const id = selectedDocumentId.value;
-        
+
         const filteredSections = computed(() => {
             if (!selectedType.value || !stepData.value) return [];
             // @ts-ignore
@@ -74,8 +75,7 @@ export default defineComponent({
             const selectedData = stepData.value['48277'][selectedDocumentId.value];
             // @ts-ignore
             const sections = selectedData.values[typeId]?.values || {};
-            console.log(stepData.value, "test");
-            
+
             return Object.keys(sections).map(key => ({
                 name: sections[key].name,
                 code: sections[key].id
@@ -91,7 +91,7 @@ export default defineComponent({
                 stepData.value = data.step_2.elements || {};
                 // console.log(stepData.value);
                 types.value = formatTypes(stepData.value);
-
+                console.log(types.value)
             } catch (error) {
                 console.error('Ошибка при загрузке данных:', error);
             }
@@ -99,10 +99,15 @@ export default defineComponent({
 
         const formatTypes = (data: any) => {
             if (!data || !data["48277"]) return [];
-            return Object.keys(data["48277"][selectedDocumentId.value].values).map(key => ({
-                name: data["48277"][selectedDocumentId.value].values[key].value,
-                code: data["48277"][selectedDocumentId.value].values[key].id
-            }));
+
+            return Object.keys(data["48277"][selectedDocumentId.value].values)
+                .map(key => ({
+                    name: data["48277"][selectedDocumentId.value].values[key].value,
+                    code: data["48277"][selectedDocumentId.value].values[key].id,
+                    sort: data["48277"][selectedDocumentId.value].values[key].sort
+                }))
+                .sort((a, b) => a.sort - b.sort)
+                .map(({ name, code }) => ({ name, code }));
         };
 
         const onFirstDropdownChange = () => {
