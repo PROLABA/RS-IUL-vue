@@ -144,12 +144,12 @@ export default defineComponent({
 
         const store = useStore();
 
-        const fileDataSelected = store.state.selectedItems.OBJECT_NAME;
+        const fileDataSelected = store.state.selectedItems.OBJECT_NAME || "";
         const selectedTemplateId = store.state.selectedItems.DOCUMENT_TYPE_ID;
         //@ts-ignore
         const selectedData = store.state.selectedItems.DATA_TEST;
-        const selectedFileNameWx = store.state.selectedItems.FILE_NAME_WX;
-        const selectedLastNumberChange = store.state.selectedItems.LAST_NUMBER_CHANGE;
+        const selectedFileNameWx = store.state.selectedItems.FILE_NAME_WX || "";
+        const selectedLastNumberChange = store.state.selectedItems.LAST_NUMBER_CHANGE || "";
         const editedData = formatDateDDMMYY('27.09.2024')
         const date = ref<string | null>(editedData ? editedData : null);
 

@@ -89,9 +89,7 @@ export default defineComponent({
                 await store.dispatch('fetchData');
                 const data = store.getters.getData;
                 stepData.value = data.step_2.elements || {};
-                // console.log(stepData.value);
                 types.value = formatTypes(stepData.value);
-                console.log(types.value)
             } catch (error) {
                 console.error('Ошибка при загрузке данных:', error);
             }
