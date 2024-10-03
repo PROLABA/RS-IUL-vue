@@ -13,6 +13,7 @@
                     </svg>
                     Готово
                 </div>
+                <img src="../assets/img/result7.svg" alt="" srcset="">
                 <div class="grey-line"></div>
             </div>
             <div class="acsess-description ">
@@ -58,6 +59,12 @@
     background-color: #E9E9E9;
 }
 
+.acsess{ 
+    display: flex;
+    align-self: center;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
 .acsess-link {
     padding-top: 15px;
 }

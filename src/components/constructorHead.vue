@@ -4,7 +4,7 @@
             <div class="text-constructor-head">
                 {{ title }}
                 <div class="atention">
-                    <div class="icon"><svg width="26" height="26" viewBox="0 0 26 26" fill="none"
+                    <!-- <div class="icon"><svg width="26" height="26" viewBox="0 0 26 26" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
                             <path
                                 d="M25 13C25 6.3724 19.6276 1 13 1C6.3724 1 1 6.3724 1 13C1 19.6276 6.3724 25 13 25C19.6276 25 25 19.6276 25 13Z"
@@ -13,9 +13,9 @@
                                 d="M13.2908 19.0002V13.0002C13.2908 12.435 13.2908 12.1518 13.1156 11.9754C12.9392 11.8002 12.6572 11.8002 12.0908 11.8002M12.9908 8.2002H13.0016"
                                 stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
-                    </div>
-                    <a href="#" @click.prevent="openVideoInstructions">Смотреть видео инструкцию</a>
-                    <VideoInstructions ref="videoInstructionsRef" :videoLink="vidoLink || ''"></VideoInstructions>
+                    </div> -->
+                    <!-- <a href="#" @click.prevent="openVideoInstructions">Смотреть видео инструкцию</a>
+                    <VideoInstructions ref="videoInstructionsRef" :videoLink="vidoLink || ''"></VideoInstructions> -->
                 </div>
             </div>
             <div class="white-bg-text">
