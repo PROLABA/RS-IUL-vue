@@ -132,7 +132,7 @@ export default createStore<State>({
     async fetchData({ commit }: Context) {
       try {
         const response = await axios.get<{ data: any }>(
-          "https://devserv.rsexpertiza.ru/api/document-constructor"
+          "https://services.rsexpertiza.ru/api/document-constructor"
         );
         commit("setData", response.data.data);
       } catch (error) {
@@ -147,7 +147,7 @@ export default createStore<State>({
         });
 
         const response = await axios.post<{ data: Record<string, any> }>(
-          "https://devserv.rsexpertiza.ru/api/document-constructor/files-info",
+          "https://services.rsexpertiza.ru/api/document-constructor/files-info",
           formData,
           { headers: { "Content-Type": "multipart/form-data" } }
         );
@@ -186,7 +186,7 @@ export default createStore<State>({
     async getHTMLDOC({ commit, state }: Context) {
       try {
         const response = await axios.post<{ data: string }>(
-          "https://devserv.rsexpertiza.ru/api/document-constructor/generate/preview",
+          "https://services.rsexpertiza.ru/api/document-constructor/generate/preview",
           JSON.stringify(state.selectedItems),
         );
         commit("setHTMLPreview", response.data.data);
@@ -199,7 +199,7 @@ export default createStore<State>({
         const response = await axios.post<{
           file_path: any; data: string; id: any;
         }>(
-          "https://devserv.rsexpertiza.ru/api/document-constructor/generate/file",
+          "https://services.rsexpertiza.ru/api/document-constructor/generate/file",
           JSON.stringify(state.selectedItems)
         );
         //@ts-ignore
@@ -212,7 +212,7 @@ export default createStore<State>({
         //@ts-ignore
         if (response.data.data.file_path) {
           //@ts-ignore
-          const downloadUrl = `https://devserv.rsexpertiza.ru${response.data.data.file_path}`;
+          const downloadUrl = `https://services.rsexpertiza.ru${response.data.data.file_path}`;
           window.open(downloadUrl, "_blank");
 
 
@@ -231,7 +231,7 @@ export default createStore<State>({
         const versionId = vId || state.currentVersionId;
         if (versionId !== undefined && versionId !== null && versionId !== '') {
           const response = await axios.get<{ data: { [key: string]: { json: string } } }>(
-            `https://devserv.rsexpertiza.ru/api/document-constructor/versions?id=${versionId}`
+            `https://services.rsexpertiza.ru/api/document-constructor/versions?id=${versionId}`
           );
           const newData = JSON.parse(response.data.data["0"].json);
           if (response.data.data) {
@@ -249,7 +249,7 @@ export default createStore<State>({
     async getFAQQuestions({ commit }: Context) {
       try {
         const response = await axios.get<{ data: any[] }>(
-          "https://devserv.rsexpertiza.ru/api/document-constructor/questions"
+          "https://services.rsexpertiza.ru/api/document-constructor/questions"
         );
         if (response.data && response.data.data) {
           commit("setFAQQuestions", response.data.data);
@@ -264,7 +264,7 @@ export default createStore<State>({
     async getHeaderInfo({ commit }: Context) {
       try {
         const response = await axios.get<{ data: any[] }>(
-          "https://devserv.rsexpertiza.ru/api/document-constructor/header"
+          "https://services.rsexpertiza.ru/api/document-constructor/header"
         );
         if (response.data) {
           commit("setHeaderInfo", response.data.data);

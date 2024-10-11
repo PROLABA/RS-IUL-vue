@@ -72,7 +72,7 @@ export default defineComponent({
             // @ts-ignore
             const typeId = selectedType.value.code;
             // @ts-ignore
-            const selectedData = stepData.value['48277'][selectedDocumentId.value];
+            const selectedData = stepData.value['48662'][selectedDocumentId.value];
             // @ts-ignore
             const sections = selectedData.values[typeId]?.values || {};
 
@@ -96,13 +96,13 @@ export default defineComponent({
         });
 
         const formatTypes = (data: any) => {
-            if (!data || !data["48277"]) return [];
+            if (!data || !data["48662"]) return [];
 
-            return Object.keys(data["48277"][selectedDocumentId.value].values)
+            return Object.keys(data["48662"][selectedDocumentId.value].values)
                 .map(key => ({
-                    name: data["48277"][selectedDocumentId.value].values[key].value,
-                    code: data["48277"][selectedDocumentId.value].values[key].id,
-                    sort: data["48277"][selectedDocumentId.value].values[key].sort
+                    name: data["48662"][selectedDocumentId.value].values[key].value,
+                    code: data["48662"][selectedDocumentId.value].values[key].id,
+                    sort: data["48662"][selectedDocumentId.value].values[key].sort
                 }))
                 .sort((a, b) => a.sort - b.sort)
                 .map(({ name, code }) => ({ name, code }));

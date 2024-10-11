@@ -36,14 +36,14 @@
                 </template>
                 <template #image>
                   <img class="iul-imges"
-                       :src="`https://devserv.rsexpertiza.ru${item.img_detail}`"
+                       :src="`https://services.rsexpertiza.ru${item.img}`"
                        alt="img"
                   />
                 </template>
                 <template #preview="slotProps">
                   <img width="570"
                        height="650"
-                       :src="`https://devserv.rsexpertiza.ru${item.img_detail}`"
+                       :src="`https://services.rsexpertiza.ru${item.img_detail}`"
                        alt="preview"
                        :style="slotProps.style"
                        @click="slotProps.onClick"
@@ -110,8 +110,8 @@ export default defineComponent({
 
   computed: {
     formattedItems(): FormattedItem[] {
-      if (this.stepData.elements && this.stepData.elements["48276"]) {
-        return Object.values(this.stepData.elements["48276"]) as FormattedItem[];
+      if (this.stepData.elements && this.stepData.elements["48661"]) {
+        return Object.values(this.stepData.elements["48661"]) as FormattedItem[];
       }
       return [];
     }

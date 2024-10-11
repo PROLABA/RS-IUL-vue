@@ -215,7 +215,7 @@ export default defineComponent({
             try {
                 await store.dispatch('fetchData');
                 const data = store.getters.getData;
-                const stepData = data.step_6.elements[48274].list;
+                const stepData = data.step_6.elements[48658].list;
                 encoding.value = Object.entries(stepData).map(([key, value]) => ({
                     name: value as string,
                     value: key

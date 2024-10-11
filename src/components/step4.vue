@@ -200,7 +200,7 @@ export default defineComponent({
             try {
                 await store.dispatch('fetchData');
                 const data = store.getters.getData;
-                const stepData = data.step_5.elements["48270"].list;
+                const stepData = data.step_5.elements["48655"].list;
                 // @ts-ignore
                 actionOption.value = Object.entries(stepData).map(([key, value]) => ({
                     name: value,

@@ -27,7 +27,7 @@
                 <div class="acsess-sub-title">Вы можете скачать ИУЛ повторно или отредактировать его <br /> в «Моих
                     документах».
                 </div>
-                <div class="acsess-link"><a href="https://devserv.rsexpertiza.ru/account/history/">Мои документы</a>
+                <div class="acsess-link"><a href="https://services.rsexpertiza.ru/account/history/">Мои документы</a>
                 </div>
             </div>
         </div>
