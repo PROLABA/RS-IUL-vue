@@ -202,7 +202,6 @@ export default defineComponent({
         const selectedEncoding = ref<{ name: string, value: string }[]>([]);
         const encoding = ref<{ name: string, value: string }[]>([]);
         const store = useStore();
-        const filesInfoHash = computed(() => store.state.filesInfoHash);
         const fetchHtmlPreview = async () => {
             try {
                 await store.dispatch('getHTMLDOC');

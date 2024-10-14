@@ -170,7 +170,7 @@ export default createStore<State>({
           Object.keys(filesData).forEach((key) => {
             const fileData = filesData[key];
             const selectedEncoding = state.selectedItems.HASH_TYPE || "CRC32";
-            const fileHashValue = fileData.hash[selectedEncoding];
+            // const fileHashValue = fileData.hash[selectedEncoding];
 
             commit("addSelectedItem", {
               HASH_TYPE: selectedEncoding,
