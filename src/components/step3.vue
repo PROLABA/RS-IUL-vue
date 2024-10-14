@@ -165,7 +165,7 @@ export default defineComponent({
         const isNextButtonEnabled = computed(() => {
             return objectName.value !== '' &&
                 documentName.value !== '' &&
-                // lastNumberChange.value !== '' &&
+                lastNumberChange.value !== '' &&
                 (selectedTemplateId === flagId ? fileNameWx.value !== '' : true);
         });
 

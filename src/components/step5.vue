@@ -221,9 +221,11 @@ export default defineComponent({
                     value: key
                 }));
                 const storedEncoding = store.state.selectedItems.HASH_TYPE;
+
                 if (storedEncoding) {
                     //@ts-ignore
                     selectedEncoding.value = encoding.value.find(e => e.name === storedEncoding) || null;
+                    console.log('Stored Encoding:', storedEncoding);
                 }
                 await fetchHtmlPreview();
             } catch (error) {
@@ -240,11 +242,8 @@ export default defineComponent({
                 // @ts-ignore
                 const selectedEncoding = newValue.name || "MD5";
                 // @ts-ignore
-                const newHashes = filesInfoHash.value.FILE_HASH.map((fileHash) => ({
-                    FILE_HASH: fileHash[selectedEncoding],
-                }));
 
-                store.commit('updateFileHashes', { newHashes, selectedEncoding });
+                store.commit('addSelectedItem', { HASH_TYPE: selectedEncoding });
                 await fetchHtmlPreview();
             }
         });

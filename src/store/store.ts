@@ -4,21 +4,21 @@ import { formatDate } from "../helpers/formatedData";
 import { vId } from "../main";
 
 interface State {
-  data: any
-  selectedItems: any
-  htmlPreview: string
-  filesInfoHash: Record<string, any>
-  faqQuestions: any[]
-  headerInfo: any[]
-  flagId: string
-  currentVersionId: string,
+  data: any;
+  selectedItems: any;
+  htmlPreview: string;
+  filesInfoHash: Record<string, any>;
+  faqQuestions: any[];
+  headerInfo: any[];
+  flagId: string;
+  currentVersionId: string;
 }
 
 type Context = ActionContext<State, State>;
 
 export default createStore<State>({
   state: {
-    currentVersionId: '',
+    currentVersionId: "",
     data: null,
     selectedItems: {},
     htmlPreview: "",
@@ -32,7 +32,7 @@ export default createStore<State>({
       state.currentVersionId = id;
     },
     clearCureentVersion(state: State) {
-      state.currentVersionId = '';
+      state.currentVersionId = "";
     },
     setFlagId(state: State, id: string) {
       state.flagId = id;
@@ -52,41 +52,44 @@ export default createStore<State>({
     removeFile(state: State, fileName: string) {
       if (state.selectedItems.files) {
         state.selectedItems.files = state.selectedItems.files.filter(
-          (file: { FILE_NAME: string; }) => file.FILE_NAME !== fileName
+          (file: { FILE_NAME: string }) => file.FILE_NAME !== fileName
         );
       }
     },
-    addSelectedItem(state: State, item: Partial<State['selectedItems']>) {
+    addSelectedItem(state: State, item: Partial<State["selectedItems"]>) {
       let updatedItems = { ...state.selectedItems };
-      if ('files' in item && Array.isArray(item.files)) {
+      if ("files" in item && Array.isArray(item.files)) {
         const existingFiles = updatedItems.files || [];
-        updatedItems.files = existingFiles.map((existingFile: { FILE_HASH: any; }) => {
-          const newFile = item.files?.find(
-            (f: { FILE_HASH: any; }) => f.FILE_HASH === existingFile.FILE_HASH
-          );
-          return newFile ? { ...existingFile, ...newFile } : existingFile;
-        });
+        updatedItems.files = existingFiles.map(
+          (existingFile: { FILE_HASH: any }) => {
+            const newFile = item.files?.find(
+              (f: { FILE_HASH: any }) => f.FILE_HASH === existingFile.FILE_HASH
+            );
+            return newFile ? { ...existingFile, ...newFile } : existingFile;
+          }
+        );
 
         const newFiles = item.files.filter(
           (newFile) =>
             !existingFiles.some(
-              (existingFile: { FILE_HASH: any; }) => existingFile.FILE_HASH === newFile.FILE_HASH
+              (existingFile: { FILE_HASH: any }) =>
+                existingFile.FILE_HASH === newFile.FILE_HASH
             )
         );
         updatedItems.files = [...(updatedItems.files || []), ...newFiles];
       }
 
-      if ('roles' in item && Array.isArray(item.roles)) {
+      if ("roles" in item && Array.isArray(item.roles)) {
         updatedItems.roles = item.roles;
       }
 
       for (const [key, value] of Object.entries(item)) {
-        if (key !== 'files' && key !== 'roles') {
+        if (key !== "files" && key !== "roles") {
           updatedItems[key] = value;
         }
       }
 
-      if ('HASH_TYPE' in item) {
+      if ("HASH_TYPE" in item) {
         state.filesInfoHash = {
           ...state.filesInfoHash,
           HASH_TYPE: item.HASH_TYPE,
@@ -95,7 +98,10 @@ export default createStore<State>({
 
       state.selectedItems = updatedItems;
     },
-    addUploadInfoHash(state: State, item: { FILE_HASH: Record<string, string>[] }) {
+    addUploadInfoHash(
+      state: State,
+      item: { FILE_HASH: Record<string, string>[] }
+    ) {
       const newHashes = Array.isArray(item.FILE_HASH) ? item.FILE_HASH : [];
       const existingHashes = state.filesInfoHash.FILE_HASH || [];
 
@@ -113,10 +119,16 @@ export default createStore<State>({
       }
     },
 
-    updateFileHashes(state: State, { newHashes, selectedEncoding }: { newHashes: { FILE_HASH: string }[], selectedEncoding: string }) {
+    updateFileHashes(
+      state: State,
+      {
+        newHashes,
+        selectedEncoding,
+      }: { newHashes: { FILE_HASH: string }[]; selectedEncoding: string }
+    ) {
       if (state.selectedItems.files) {
         state.selectedItems.files = state.selectedItems.files.map(
-          (file: { FILE_HASH: any; }, index: number) => ({
+          (file: { FILE_HASH: any }, index: number) => ({
             ...file,
             FILE_HASH: newHashes[index]?.FILE_HASH || file.FILE_HASH,
           })
@@ -153,7 +165,7 @@ export default createStore<State>({
         );
 
         const filesData = response.data.data;
-
+        console.log(filesData);
         if (filesData && typeof filesData === "object") {
           Object.keys(filesData).forEach((key) => {
             const fileData = filesData[key];
@@ -167,7 +179,7 @@ export default createStore<State>({
                   FILE_NAME: fileData.name,
                   FILE_SIZE: fileData.size,
                   DOCUMENT_DATE: formatDate(fileData.last_update_date),
-                  FILE_HASH: fileHashValue,
+                  FILE_HASH: fileData.hash,
                 },
               ],
             });
@@ -187,7 +199,7 @@ export default createStore<State>({
       try {
         const response = await axios.post<{ data: string }>(
           "https://services.rsexpertiza.ru/api/document-constructor/generate/preview",
-          JSON.stringify(state.selectedItems),
+          JSON.stringify(state.selectedItems)
         );
         commit("setHTMLPreview", response.data.data);
       } catch (error) {
@@ -197,7 +209,9 @@ export default createStore<State>({
     async downloadDocument({ commit, state }: Context) {
       try {
         const response = await axios.post<{
-          file_path: any; data: string; id: any;
+          file_path: any;
+          data: string;
+          id: any;
         }>(
           "https://services.rsexpertiza.ru/api/document-constructor/generate/file",
           JSON.stringify(state.selectedItems)
@@ -205,7 +219,7 @@ export default createStore<State>({
         //@ts-ignore
         if (response.data.data.id) {
           //@ts-ignore
-          const currentVersionId = response.data.data.id
+          const currentVersionId = response.data.data.id;
           commit("setCurrentVersionId", currentVersionId);
         }
 
@@ -214,23 +228,22 @@ export default createStore<State>({
           //@ts-ignore
           const downloadUrl = `https://services.rsexpertiza.ru${response.data.data.file_path}`;
           window.open(downloadUrl, "_blank");
-
-
         } else {
           // throw new Error("Download URL not found in the response");
         }
       } catch (error) {
         console.error("Error downloading document:", error);
         throw error;
-
       }
     },
     async getVersions({ commit, state }: Context) {
       try {
         // @ts-ignore
         const versionId = vId || state.currentVersionId;
-        if (versionId !== undefined && versionId !== null && versionId !== '') {
-          const response = await axios.get<{ data: { [key: string]: { json: string } } }>(
+        if (versionId !== undefined && versionId !== null && versionId !== "") {
+          const response = await axios.get<{
+            data: { [key: string]: { json: string } };
+          }>(
             `https://services.rsexpertiza.ru/api/document-constructor/versions?id=${versionId}`
           );
           const newData = JSON.parse(response.data.data["0"].json);
