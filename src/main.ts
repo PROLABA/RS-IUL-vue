@@ -9,7 +9,10 @@ import ToastService from "primevue/toastservice";
 import store from "./store/store.ts";
 
 //@ts-ignoref
-export const vId = window.versionId;
+export const vId = window.versionId ;
+if (vId != undefined) {
+  store.commit("setCurrentVersionId", vId);
+}
 const app = createApp(App);
 app.use(PrimeVue, {
   locale: ru,

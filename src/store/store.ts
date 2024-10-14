@@ -165,7 +165,6 @@ export default createStore<State>({
         );
 
         const filesData = response.data.data;
-        console.log(filesData);
         if (filesData && typeof filesData === "object") {
           Object.keys(filesData).forEach((key) => {
             const fileData = filesData[key];
@@ -218,6 +217,7 @@ export default createStore<State>({
           JSON.stringify(state.selectedItems)
         );
         //@ts-ignore
+
         if (response.data.data.id) {
           //@ts-ignore
           const currentVersionId = response.data.data.id;

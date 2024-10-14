@@ -224,7 +224,6 @@ export default defineComponent({
                 if (storedEncoding) {
                     //@ts-ignore
                     selectedEncoding.value = encoding.value.find(e => e.name === storedEncoding) || null;
-                    console.log('Stored Encoding:', storedEncoding);
                 }
                 await fetchHtmlPreview();
             } catch (error) {
