@@ -212,8 +212,8 @@ export default createStore<State>({
           data: string;
           id: any;
         }>(
-          vId !== undefined
-            ? `https://services.rsexpertiza.ru/api/document-constructor/generate/file?update=${vId}`
+          state.currentVersionId !== ""
+            ? `https://services.rsexpertiza.ru/api/document-constructor/generate/file?update=${state.currentVersionId}`
             : "https://services.rsexpertiza.ru/api/document-constructor/generate/file",
           JSON.stringify(state.selectedItems)
         );
