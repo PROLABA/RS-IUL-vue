@@ -170,7 +170,6 @@ export default createStore<State>({
           Object.keys(filesData).forEach((key) => {
             const fileData = filesData[key];
             const selectedEncoding = state.selectedItems.HASH_TYPE || "CRC32";
-            // const fileHashValue = fileData.hash[selectedEncoding];
 
             commit("addSelectedItem", {
               HASH_TYPE: selectedEncoding,
@@ -213,7 +212,9 @@ export default createStore<State>({
           data: string;
           id: any;
         }>(
-          "https://services.rsexpertiza.ru/api/document-constructor/generate/file",
+          vId !== undefined
+            ? `https://services.rsexpertiza.ru/api/document-constructor/generate/file?update=${vId}`
+            : "https://services.rsexpertiza.ru/api/document-constructor/generate/file",
           JSON.stringify(state.selectedItems)
         );
         //@ts-ignore
