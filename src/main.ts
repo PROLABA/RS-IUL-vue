@@ -9,8 +9,8 @@ import ToastService from "primevue/toastservice";
 import store from "./store/store.ts";
 
 //@ts-ignoref
-export const vId = window.versionId ;
-if (vId != undefined) {
+export const vId = window.versionId;
+if (vId != undefined && !Number.isNaN(vId)) {
   store.commit("setCurrentVersionId", vId);
 }
 const app = createApp(App);
