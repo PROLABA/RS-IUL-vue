@@ -2,7 +2,10 @@ import { createStore, ActionContext } from "vuex";
 import axios from "axios";
 import { formatDate } from "../helpers/formatedData";
 import { vId } from "../main";
-
+// апи прод сервера
+const baseUrl = "https://services.rsexpertiza.ru";
+// апи дев сервера
+// const baseUrl = "https://devserv.rsexpertiza.ru";
 interface State {
   data: any;
   selectedItems: any;
@@ -159,7 +162,7 @@ export default createStore<State>({
         });
 
         const response = await axios.post<{ data: Record<string, any> }>(
-          "https://services.rsexpertiza.ru/api/document-constructor/files-info",
+          `${baseUrl}/api/document-constructor/files-info`,
           formData,
           { headers: { "Content-Type": "multipart/form-data" } }
         );
@@ -212,8 +215,8 @@ export default createStore<State>({
           id: any;
         }>(
           state.currentVersionId !== ""
-            ? `https://services.rsexpertiza.ru/api/document-constructor/generate/file?update=${state.currentVersionId}`
-            : "https://services.rsexpertiza.ru/api/document-constructor/generate/file",
+            ? `${baseUrl}/api/document-constructor/generate/file?update=${state.currentVersionId}`
+            : `${baseUrl}/api/document-constructor/generate/file`,
           JSON.stringify(state.selectedItems)
         );
         //@ts-ignore
@@ -227,7 +230,7 @@ export default createStore<State>({
         //@ts-ignore
         if (response.data.data.file_path) {
           //@ts-ignore
-          const downloadUrl = `https://services.rsexpertiza.ru${response.data.data.file_path}`;
+          const downloadUrl = `${baseUrl}${response.data.data.file_path}`;
           window.open(downloadUrl, "_blank");
         } else {
           // throw new Error("Download URL not found in the response");
@@ -244,9 +247,7 @@ export default createStore<State>({
         if (versionId !== undefined && versionId !== null && versionId !== "") {
           const response = await axios.get<{
             data: { [key: string]: { json: string } };
-          }>(
-            `https://services.rsexpertiza.ru/api/document-constructor/versions?id=${versionId}`
-          );
+          }>(`${baseUrl}/api/document-constructor/versions?id=${versionId}`);
           const newData = JSON.parse(response.data.data["0"].json);
           if (response.data.data) {
             commit("clearSelectedItems");
@@ -263,7 +264,7 @@ export default createStore<State>({
     async getFAQQuestions({ commit }: Context) {
       try {
         const response = await axios.get<{ data: any[] }>(
-          "https://services.rsexpertiza.ru/api/document-constructor/questions"
+          `${baseUrl}/api/document-constructor/questions`
         );
         if (response.data && response.data.data) {
           commit("setFAQQuestions", response.data.data);
@@ -278,7 +279,7 @@ export default createStore<State>({
     async getHeaderInfo({ commit }: Context) {
       try {
         const response = await axios.get<{ data: any[] }>(
-          "https://services.rsexpertiza.ru/api/document-constructor/header"
+          `${baseUrl}/api/document-constructor/header`
         );
         if (response.data) {
           commit("setHeaderInfo", response.data.data);
