@@ -5,7 +5,7 @@
   </div>
   <router-view />
 
-  <Dialog v-model:visible="displayFAQModal" header="Часто задаваемы вопросы" :style="{ width: '50vw' }">
+  <Dialog v-model:visible="displayFAQModal" header="Часто задаваемые вопросы" :style="{ width: '50vw' }">
     <Accordion>
       <AccordionTab v-for="(question, index) in questions" :key="index" :header="question.title">
         <p v-html="question.text"></p>
