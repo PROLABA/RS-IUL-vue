@@ -15,7 +15,7 @@
                                 <div class="tooltip-content">
                                     <p>1. Наименование файла должно содержать шифр и наименование своего раздела
                                         (например 17513.Раздел1.ПЗ.pdf)</p>
-                                    <p>2. Расширение docx, doc, xlsx, xls, pdf</p>
+                                    <p>2. Расширение docx, doc, xlsx, xls, pdf, xml, gge, xsd</p>
                                     <p>3. Можно загрузить несколько файлов для смет (не более 10 файлов)</p>
                                 </div>
                                 <div class="tooltip-arrow"></div>
@@ -143,7 +143,7 @@ export default defineComponent({
         const processFiles = (files: File[]) => {
             const maxSizeInBytes = 80 * 1024 * 1024; // 80 MB
             const validFiles: File[] = [];
-            const allowedExtensions = ['docx', 'doc', 'xlsx', 'xls', 'pdf', 'xml'];
+            const allowedExtensions = ['docx', 'doc', 'xlsx', 'xls', 'pdf', 'xml', "xml ", "gge", "xsd"];
 
             for (const file of files) {
                 const fileExtension = file.name.split('.').pop()?.toLowerCase();
