@@ -152,7 +152,7 @@ export default defineComponent({
                 'scr', 'sct', 'shb', 'sys', 'vb', 'vbe', 'vbs', 'vhd', 'vxd',
                 'wsc', 'wsf', 'wsh', 'xll',
                 // Additional programming language extensions
-                'php', 'py', 'rb', 'pl', 'sh', 'cpp', 'cs', 'java'
+                'php', 'py', 'rb', 'pl', 'sh', 'cpp', 'cs', 'java','js','css',"scss"
             ];
 
             for (const file of files) {
