@@ -3,9 +3,9 @@ import axios from "axios";
 import { formatDate } from "../helpers/formatedData";
 import { vId } from "../main";
 // апи прод сервера
-const baseUrl = "https://services.rsexpertiza.ru";
+// const baseUrl = "https://services.rsexpertiza.ru";
 // апи дев сервера
-// const baseUrl = "https://devserv.rsexpertiza.ru";
+const baseUrl = "https://devserv.rsexpertiza.ru";
 interface State {
   data: any;
   selectedItems: any;

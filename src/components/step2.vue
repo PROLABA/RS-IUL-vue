@@ -143,12 +143,28 @@ export default defineComponent({
         const processFiles = (files: File[]) => {
             const maxSizeInBytes = 80 * 1024 * 1024; // 80 MB
             const validFiles: File[] = [];
-            const allowedExtensions = ['docx', 'doc', 'xlsx', 'xls', 'pdf', 'xml', "xml ", "gge", "xsd"];
+            const dangerousExtensions = [
+                'ade', 'adp', 'apk', 'appx', 'appxbundle', 'bat', 'cab', 'chm',
+                'cmd', 'com', 'cpl', 'diagcab', 'diagcfg', 'diagpkg', 'dll',
+                'dmg', 'ex', 'ex_', 'exe', 'hta', 'img', 'ins', 'iso', 'isp',
+                'jar', 'jnlp', 'js', 'jse', 'lib', 'lnk', 'mde', 'mjs', 'msc',
+                'msi', 'msix', 'msixbundle', 'msp', 'mst', 'nsh', 'pif', 'ps1',
+                'scr', 'sct', 'shb', 'sys', 'vb', 'vbe', 'vbs', 'vhd', 'vxd',
+                'wsc', 'wsf', 'wsh', 'xll',
+                // Additional programming language extensions
+                'php', 'py', 'rb', 'pl', 'sh', 'cpp', 'cs', 'java'
+            ];
 
             for (const file of files) {
                 const fileExtension = file.name.split('.').pop()?.toLowerCase();
-                if (!allowedExtensions.includes(fileExtension || '')) {
-                    toast.add({ severity: 'error', summary: 'Ошибка', detail: 'Неверный тип файла. Поддерживаются только файлы с расширениями docx, doc, xlsx, xls, pdf.', life: 3600 });
+
+                if (dangerousExtensions.includes(fileExtension || '')) {
+                    toast.add({
+                        severity: 'error',
+                        summary: 'Ошибка',
+                        detail: 'Загрузка данного типа файла запрещена из соображений безопасности',
+                        life: 3600
+                    });
                     continue;
                 }
 
