@@ -141,7 +141,7 @@ export default defineComponent({
         };
 
         const processFiles = (files: File[]) => {
-            const maxSizeInBytes = 80 * 1024 * 1024; // 80 MB
+            const maxSizeInBytes = 500 * 1024 * 1024; // 80 MB
             const validFiles: File[] = [];
             const dangerousExtensions = [
                 'ade', 'adp', 'apk', 'appx', 'appxbundle', 'bat', 'cab', 'chm',
